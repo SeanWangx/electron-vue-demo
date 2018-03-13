@@ -22,9 +22,9 @@ app.on('ready', () => {
       console.log('Unable to install `vue-devtools`: \n', err)
     })
 
-  ipcMain.on('async-msg', (event, arg) => {
+  ipcMain.on('async-msg', (event, payload) => {
     setTimeout(() => {
-      event.sender.send('async-msg-reply', `[reply] - ${arg} - ${new Date().getTime()}`)
+      event.sender.send(`async-msg-reply-${payload.uuid}`, `[reply] - ${payload.msg} - ${payload.uuid}`)
     }, 3000)
   })
 })

@@ -23,10 +23,11 @@
     methods: {
       handleClick () {
         console.log(this.msg)
-        ipcRenderer.once('async-msg-reply', (event, arg) => {
+        let uuid = new Date().getTime()
+        ipcRenderer.once(`async-msg-reply-${uuid}`, (event, arg) => {
           console.log(arg)
         })
-        ipcRenderer.send('async-msg', this.msg)
+        ipcRenderer.send('async-msg', { uuid, msg: this.msg })
       }
     }
   }
