@@ -7,6 +7,7 @@
 </template>
 
 <script>
+  import { ipcRenderer } from 'electron'
   export default {
     name: 'electron-vue-demo',
     data () {
@@ -14,9 +15,18 @@
         msg: 'Hello World'
       }
     },
+    created () {
+      /* ipcRenderer.on('async-msg-reply', (event, arg) => {
+        console.log(arg)
+      }) */
+    },
     methods: {
       handleClick () {
         console.log(this.msg)
+        ipcRenderer.once('async-msg-reply', (event, arg) => {
+          console.log(arg)
+        })
+        ipcRenderer.send('async-msg', this.msg)
       }
     }
   }
