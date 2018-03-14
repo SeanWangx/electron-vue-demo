@@ -20,6 +20,7 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
+    resizable: false,
     height: 563,
     useContentSize: true,
     width: 1000
@@ -33,6 +34,7 @@ function createWindow () {
 
   // register channel listener
   ipcMain.on('TEST_CHANNEL', (event, payload) => {
+    mainWindow.setSize(200, 300)
     const { data, uuid } = payload
     event.sender.send(`TEST_CHANNEL_SUCCESS_${uuid}`, data)
   })
