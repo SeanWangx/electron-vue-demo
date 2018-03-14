@@ -22,11 +22,10 @@ app.on('ready', () => {
       console.log('Unable to install `vue-devtools`: \n', err)
     })
 
-  ipcMain.on('async-msg', (event, payload) => {
-    setTimeout(() => {
-      event.sender.send(`async-msg-reply-${payload.uuid}`, `[reply] - ${payload.msg} - ${payload.uuid}`)
-    }, 3000)
-  })
+    ipcMain.on('TEST_CHANNEL', (event, payload) => {
+      const { data, uuid } = payload
+      event.sender.send(`TEST_CHANNEL_SUCCESS_${uuid}`, data)
+    })
 })
 
 // Require `main` process to boot app
