@@ -6,10 +6,9 @@
  */
 
 /* eslint-disable */
-
+import { app, BrowserWindow, globalShortcut } from 'electron'
 // Set environment for development
 process.env.NODE_ENV = 'development'
-const { app, ipcMain } = require('electron')
 // Install `electron-debug` with `devtron`
 require('electron-debug')({ showDevTools: true })
 
@@ -22,10 +21,14 @@ app.on('ready', () => {
       console.log('Unable to install `vue-devtools`: \n', err)
     })
 
-    ipcMain.on('TEST_CHANNEL', (event, payload) => {
-      const { data, uuid } = payload
-      event.sender.send(`TEST_CHANNEL_SUCCESS_${uuid}`, data)
-    })
+
+  // register shortcut
+  globalShortcut.register('ctrl+shift+p', function () {
+    let win = BrowserWindow.getFocusedWindow();
+    if (win) {
+        win.webContents.openDevTools({ detach: true });
+    }
+  })
 })
 
 // Require `main` process to boot app
