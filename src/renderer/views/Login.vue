@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper-container flex-container">
     <div class="login-container">
-        <el-button v-show="userValid === false" type="primary" @click="login">Login</el-button>
+        <el-button v-show="userValid === false" type="primary" @click="test">Login</el-button>
         <el-button v-show="userValid === true" type="default" @click="logout">Logout</el-button>
     </div>
   </div>
@@ -10,14 +10,34 @@
 <script>
 import { ipcRenderer } from 'electron'
 import uuidv1 from 'uuid/v1'
+import { getAccessToken } from '@/utils/tools'
 export default {
   name: 'Login',
   data () {
     return {
+      AccessKey: '',
+      SecretKey: '',
       userValid: false
     }
   },
   methods: {
+    test () {
+      if (!!this.AccessKey && !!this.SecretKey) {
+        let accessToken = getAccessToken('/buckets', this.AccessKey, this.SecretKey)
+        let uuid = uuidv1()
+        let payload = {
+          uuid,
+          data: {
+            url: 'https://rs.qbox.me/buckets',
+            authorization: `QBox ${accessToken}`
+          }
+        }
+        ipcRenderer.once(`TEST_CHANNEL_SUCCESS_${uuid}`, (event, arg) => {
+          console.log('response', arg)
+        })
+        ipcRenderer.send('TEST_CHANNEL', payload)
+      }
+    },
     login () {
       let uuid = uuidv1()
       let payload = {

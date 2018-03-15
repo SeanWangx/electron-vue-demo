@@ -1,6 +1,7 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain } from 'electron'
+import axios from 'axios'
 
 /**
  * Set `__static` path to static files in production
@@ -34,11 +35,20 @@ function createWindow () {
 
   // register channel listener
   ipcMain.on('TEST_CHANNEL', (event, payload) => {
-    mainWindow.setSize(800, 600)
-    mainWindow.setMinimumSize(800, 600)
-    mainWindow.setResizable(true)
     const { data, uuid } = payload
-    event.sender.send(`TEST_CHANNEL_SUCCESS_${uuid}`, data)
+    const { url, authorization } = data
+    axios.get(url, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': authorization
+      }
+    }).then(res => {
+      console.log(res)
+      event.sender.send(`TEST_CHANNEL_SUCCESS_${uuid}`, res)
+    }).catch(err => {
+      console.warn(err)
+      event.sender.send(`TEST_CHANNEL_SUCCESS_${uuid}`, err)
+    })
   })
 
   // LOGIN
