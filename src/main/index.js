@@ -20,10 +20,10 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    resizable: false,
-    height: 563,
+    resizable: true,
+    height: 600,
     useContentSize: true,
-    width: 1000
+    width: 800
   })
 
   mainWindow.loadURL(winURL)
@@ -34,9 +34,30 @@ function createWindow () {
 
   // register channel listener
   ipcMain.on('TEST_CHANNEL', (event, payload) => {
-    mainWindow.setSize(200, 300)
+    mainWindow.setSize(800, 600)
+    mainWindow.setMinimumSize(800, 600)
+    mainWindow.setResizable(true)
     const { data, uuid } = payload
     event.sender.send(`TEST_CHANNEL_SUCCESS_${uuid}`, data)
+  })
+
+  // LOGIN
+  ipcMain.on('LOGIN', (event, payload) => {
+    // mainWindow.setResizable(true)
+    // mainWindow.setMinimumSize(800, 600)
+    // mainWindow.setSize(800, 600)
+    // mainWindow.center()
+    const { data, uuid } = payload
+    event.sender.send(`LOGIN_SUCCESS_${uuid}`, data)
+  })
+  // LOGOUT
+  ipcMain.on('LOGOUT', (event, payload) => {
+    // mainWindow.setResizable(false)
+    // mainWindow.setMinimumSize(350, 500)
+    // mainWindow.setSize(350, 500)
+    // mainWindow.center()
+    const { data, uuid } = payload
+    event.sender.send(`LOGOUT_SUCCESS_${uuid}`, data)
   })
 }
 

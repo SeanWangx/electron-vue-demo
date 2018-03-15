@@ -1,7 +1,8 @@
 <template>
-  <div class="wrapper-container">
-    <div class="common-format login-container">
-      <el-button type="primary" @click="handleClick">Login</el-button>
+  <div class="wrapper-container flex-container">
+    <div class="login-container">
+        <el-button v-show="userValid === false" type="primary" @click="login">Login</el-button>
+        <el-button v-show="userValid === true" type="default" @click="logout">Logout</el-button>
     </div>
   </div>
 </template>
@@ -11,18 +12,35 @@ import { ipcRenderer } from 'electron'
 import uuidv1 from 'uuid/v1'
 export default {
   name: 'Login',
+  data () {
+    return {
+      userValid: false
+    }
+  },
   methods: {
-    handleClick () {
-      console.log('Login')
+    login () {
       let uuid = uuidv1()
       let payload = {
         uuid,
-        data: 'Hello World!'
+        data: 'Login'
       }
-      ipcRenderer.once(`TEST_CHANNEL_SUCCESS_${uuid}`, (event, arg) => {
+      ipcRenderer.once(`LOGIN_SUCCESS_${uuid}`, (event, arg) => {
         console.log(arg)
+        this.userValid = true
       })
-      ipcRenderer.send('TEST_CHANNEL', payload)
+      ipcRenderer.send('LOGIN', payload)
+    },
+    logout () {
+      let uuid = uuidv1()
+      let payload = {
+        uuid,
+        data: 'Logout'
+      }
+      ipcRenderer.once(`LOGOUT_SUCCESS_${uuid}`, (event, arg) => {
+        console.log(arg)
+        this.userValid = false
+      })
+      ipcRenderer.send('LOGOUT', payload)
     }
   }
 }
@@ -30,6 +48,12 @@ export default {
 
 <style scoped>
 .login-container {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0 20px;
+    box-sizing: border-box;
     text-align: center;
 }
 </style>
