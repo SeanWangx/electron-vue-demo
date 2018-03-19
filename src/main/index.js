@@ -24,7 +24,7 @@ function createWindow () {
     resizable: true,
     height: 600,
     useContentSize: true,
-    width: 800
+    width: 510
   })
 
   mainWindow.loadURL(winURL)
@@ -63,8 +63,8 @@ function createWindow () {
   // LOGOUT
   ipcMain.on('LOGOUT', (event, payload) => {
     // mainWindow.setResizable(false)
-    // mainWindow.setMinimumSize(350, 500)
-    // mainWindow.setSize(350, 500)
+    // mainWindow.setMinimumSize(510, 600)
+    // mainWindow.setSize(510, 600)
     // mainWindow.center()
     const { data, uuid } = payload
     event.sender.send(`LOGOUT_SUCCESS_${uuid}`, data)
