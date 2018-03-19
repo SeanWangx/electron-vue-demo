@@ -6,9 +6,9 @@
           <el-input v-model="form.AccessKey" size="small" placeholder="AccessKey" clearable></el-input>
         </el-form-item>
         <el-form-item label="SecretKey" prop="SecretKey">
-          <el-input v-model="form.SecretKey" size="small" placeholder="SecretKey" clearable :type="pwdType">
+          <el-input v-model="form.SecretKey" size="small" placeholder="SecretKey" clearable :type="type">
             <template slot="append">
-              <el-button type="text" @click="handleToggle">{{ pwdVisible ? '隐藏' : '显示' }}</el-button>
+              <el-button type="text" @click="visible = !visible">{{ visible ? '隐藏' : '显示' }}</el-button>
             </template>
           </el-input>
         </el-form-item>
@@ -21,13 +21,15 @@
 </template>
 
 <script>
-// import { ipcRenderer } from 'electron'
-// import uuidv1 from 'uuid/v1'
-// import { getAccessToken } from '@/utils/tools'
+import { ipcRenderer } from 'electron'
+import uuidv1 from 'uuid/v1'
+import { getAccessToken } from '@/utils/tools'
 export default {
   name: 'Login',
   data () {
     return {
+      visible: false,
+      type: 'password',
       form: {
         AccessKey: '',
         SecretKey: ''
@@ -39,49 +41,39 @@ export default {
         SecretKey: [
           { required: true, message: '请输入SecretKey', trigger: 'change' }
         ]
-      },
-      pwdVisible: false,
-      pwdType: 'password'
+      }
     }
   },
   methods: {
-    handleToggle () {
-      this.pwdVisible = !this.pwdVisible
-      this.pwdType = this.pwdVisible ? 'text' : 'password'
+    _login () {
+      let accessToken = getAccessToken('/buckets', this.form.AccessKey, this.form.SecretKey)
+      let uuid = uuidv1()
+      let payload = {
+        uuid,
+        data: {
+          url: 'https://rs.qbox.me/buckets',
+          authorization: `QBox ${accessToken}`
+        }
+      }
+      ipcRenderer.once(`TEST_CHANNEL_SUCCESS_${uuid}`, (event, arg) => {
+        console.log('response', arg)
+      })
+      ipcRenderer.send('TEST_CHANNEL', payload)
     },
     login () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          // TODO
+          this._login()
         } else {
           console.log('error submit!!')
           return false
         }
       })
-      /* let uuid = uuidv1()
-      let payload = {
-        uuid,
-        data: 'Login'
-      }
-      ipcRenderer.once(`LOGIN_SUCCESS_${uuid}`, (event, arg) => {
-        console.log(arg)
-      })
-      ipcRenderer.send('LOGIN', payload) */
-      /* if (!!this.AccessKey && !!this.SecretKey) {
-        let accessToken = getAccessToken('/buckets', this.AccessKey, this.SecretKey)
-        let uuid = uuidv1()
-        let payload = {
-          uuid,
-          data: {
-            url: 'https://rs.qbox.me/buckets',
-            authorization: `QBox ${accessToken}`
-          }
-        }
-        ipcRenderer.once(`TEST_CHANNEL_SUCCESS_${uuid}`, (event, arg) => {
-          console.log('response', arg)
-        })
-        ipcRenderer.send('TEST_CHANNEL', payload)
-      } */
+    }
+  },
+  watch: {
+    visible (newVal) {
+      this.type = newVal ? 'text' : 'password'
     }
   }
 }
