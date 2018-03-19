@@ -1,28 +1,73 @@
 <template>
   <div class="wrapper-container flex-container">
     <div class="login-container">
-        <el-button v-show="userValid === false" type="primary" @click="test">Login</el-button>
-        <el-button v-show="userValid === true" type="default" @click="logout">Logout</el-button>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="AccessKey" prop="AccessKey">
+          <el-input v-model="form.AccessKey" size="small" placeholder="AccessKey" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="SecretKey" prop="SecretKey">
+          <el-input v-model="form.SecretKey" size="small" placeholder="SecretKey" clearable :type="pwdType">
+            <template slot="append">
+              <el-button type="text" @click="handleToggle">{{ pwdVisible ? '隐藏' : '显示' }}</el-button>
+            </template>
+          </el-input>
+        </el-form-item>
+        <div>
+          <el-button size="small" type="primary" @click="login">Login</el-button>
+        </div>
+      </el-form>
     </div>
   </div>
 </template>
 
 <script>
-import { ipcRenderer } from 'electron'
-import uuidv1 from 'uuid/v1'
-import { getAccessToken } from '@/utils/tools'
+// import { ipcRenderer } from 'electron'
+// import uuidv1 from 'uuid/v1'
+// import { getAccessToken } from '@/utils/tools'
 export default {
   name: 'Login',
   data () {
     return {
-      AccessKey: '',
-      SecretKey: '',
-      userValid: false
+      form: {
+        AccessKey: '',
+        SecretKey: ''
+      },
+      rules: {
+        AccessKey: [
+          { required: true, message: '请输入AccessKey', trigger: 'change' }
+        ],
+        SecretKey: [
+          { required: true, message: '请输入SecretKey', trigger: 'change' }
+        ]
+      },
+      pwdVisible: false,
+      pwdType: 'password'
     }
   },
   methods: {
-    test () {
-      if (!!this.AccessKey && !!this.SecretKey) {
+    handleToggle () {
+      this.pwdVisible = !this.pwdVisible
+      this.pwdType = this.pwdVisible ? 'text' : 'password'
+    },
+    login () {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          // TODO
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+      /* let uuid = uuidv1()
+      let payload = {
+        uuid,
+        data: 'Login'
+      }
+      ipcRenderer.once(`LOGIN_SUCCESS_${uuid}`, (event, arg) => {
+        console.log(arg)
+      })
+      ipcRenderer.send('LOGIN', payload) */
+      /* if (!!this.AccessKey && !!this.SecretKey) {
         let accessToken = getAccessToken('/buckets', this.AccessKey, this.SecretKey)
         let uuid = uuidv1()
         let payload = {
@@ -36,31 +81,7 @@ export default {
           console.log('response', arg)
         })
         ipcRenderer.send('TEST_CHANNEL', payload)
-      }
-    },
-    login () {
-      let uuid = uuidv1()
-      let payload = {
-        uuid,
-        data: 'Login'
-      }
-      ipcRenderer.once(`LOGIN_SUCCESS_${uuid}`, (event, arg) => {
-        console.log(arg)
-        this.userValid = true
-      })
-      ipcRenderer.send('LOGIN', payload)
-    },
-    logout () {
-      let uuid = uuidv1()
-      let payload = {
-        uuid,
-        data: 'Logout'
-      }
-      ipcRenderer.once(`LOGOUT_SUCCESS_${uuid}`, (event, arg) => {
-        console.log(arg)
-        this.userValid = false
-      })
-      ipcRenderer.send('LOGOUT', payload)
+      } */
     }
   }
 }
