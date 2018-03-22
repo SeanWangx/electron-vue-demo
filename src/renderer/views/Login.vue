@@ -60,10 +60,23 @@ export default {
       })
       ipcRenderer.send('TEST_CHANNEL', payload)
     },
+    _login2 () {
+      let accessToken = getAccessToken('/buckets', this.form.AccessKey, this.form.SecretKey)
+      this.$http.get('https://rs.qbox.me/buckets', {
+        method: 'get',
+        headers: {
+          'Authorization': `QBox ${accessToken}`
+        }
+      }).then(res => {
+        console.log(res)
+      }).catch(error => {
+        console.warn(error)
+      })
+    },
     login () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this._login()
+          this._login2()
         } else {
           console.log('error submit!!')
           return false
