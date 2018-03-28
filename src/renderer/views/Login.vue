@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron'
-import uuidv1 from 'uuid/v1'
 import { getAccessToken } from '@/utils/tools'
 export default {
   name: 'Login',
@@ -47,28 +45,13 @@ export default {
   methods: {
     _login () {
       let accessToken = getAccessToken('/buckets', this.form.AccessKey, this.form.SecretKey)
-      let uuid = uuidv1()
-      let payload = {
-        uuid,
-        data: {
-          url: 'https://rs.qbox.me/buckets',
-          authorization: `QBox ${accessToken}`
-        }
-      }
-      ipcRenderer.once(`TEST_CHANNEL_SUCCESS_${uuid}`, (event, arg) => {
-        console.log('response', arg)
-      })
-      ipcRenderer.send('TEST_CHANNEL', payload)
-    },
-    _login2 () {
-      let accessToken = getAccessToken('/buckets', this.form.AccessKey, this.form.SecretKey)
       this.$http.get('https://rs.qbox.me/buckets', {
         method: 'get',
         headers: {
           'Authorization': `QBox ${accessToken}`
         }
       }).then(res => {
-        console.log(res)
+        // todo
       }).catch(error => {
         console.warn(error)
       })
@@ -76,7 +59,7 @@ export default {
     login () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this._login2()
+          this._login()
         } else {
           console.log('error submit!!')
           return false

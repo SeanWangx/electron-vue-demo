@@ -9,6 +9,11 @@ import './assets/style'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.use(ElementUI)
+axios.interceptors.response.use(response => {
+  return response.status === 200 ? response.data : Promise.reject(response)
+}, (error, v) => {
+  return Promise.reject(error)
+})
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
