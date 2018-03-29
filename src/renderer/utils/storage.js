@@ -1,6 +1,6 @@
 export default {
-  set (key, value) {
-    if (!!key && !!value) {
+  set (key, value = '') {
+    if (!!key === true) {
       window.localStorage.setItem(key, JSON.stringify(value))
     }
   },

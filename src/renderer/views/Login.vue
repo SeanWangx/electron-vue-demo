@@ -2,19 +2,19 @@
   <div class="wrapper-container flex-container">
     <div class="login-container">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="AccessKey" prop="AccessKey">
-          <el-input v-model="form.AccessKey" size="small" placeholder="AccessKey" clearable></el-input>
+        <el-form-item label="AccessKey" prop="AccessKey" size="mini">
+          <el-input v-model="form.AccessKey" placeholder="AccessKey" clearable></el-input>
         </el-form-item>
-        <el-form-item label="SecretKey" prop="SecretKey">
-          <el-input v-model="form.SecretKey" size="small" placeholder="SecretKey" clearable :type="type">
+        <el-form-item label="SecretKey" prop="SecretKey" size="mini">
+          <el-input v-model="form.SecretKey" placeholder="SecretKey" clearable :type="type">
             <template slot="append">
               <el-button type="text" @click="visible = !visible">{{ visible ? '隐藏' : '显示' }}</el-button>
             </template>
           </el-input>
         </el-form-item>
         <div>
-          <el-button v-show="userValid === false" size="small" type="primary" @click="login">Login</el-button>
-          <el-button v-show="userValid === true" size="small" type="default" @click="logout">Logout</el-button>
+          <el-button v-show="userValid === false" size="mini" type="primary" @click="login">Login</el-button>
+          <el-button v-show="userValid === true" size="mini" type="default" @click="logout">Logout</el-button>
         </div>
       </el-form>
     </div>
@@ -47,9 +47,6 @@ export default {
     ...mapGetters({
       userValid: 'userValid'
     })
-  },
-  mounted () {
-    console.log('userValid', this.userValid)
   },
   methods: {
     ...mapActions({

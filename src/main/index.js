@@ -24,7 +24,7 @@ function createWindow () {
     useContentSize: true,
     resizable: true,
     height: 600,
-    width: 510
+    width: 540
   })
 
   mainWindow.loadURL(winURL)
@@ -45,8 +45,8 @@ function createWindow () {
       mainWindow.center()
     } else {
       mainWindow.setResizable(false)
-      mainWindow.setMinimumSize(510, 600)
-      mainWindow.setSize(510, 600)
+      mainWindow.setMinimumSize(540, 600)
+      mainWindow.setSize(540, 600)
       mainWindow.center()
     }
     event.sender.send(`SET_CLIENT_VALID_SUCCESS_${uuid}`)

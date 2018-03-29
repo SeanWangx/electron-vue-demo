@@ -1,6 +1,16 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <el-container style="height: 100%;">
+      <el-header style="background: #e5e9f2;height: 48px;">
+        <div style="text-align: center;line-height: 48px;position: relative;">
+          <span>QN</span>
+          <span class="logout-btn" v-if="userValid === true"><i class="el-icon-setting"></i></span>
+        </div>
+      </el-header>
+      <el-main style="height: 100%;">
+        <router-view></router-view>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
@@ -18,6 +28,12 @@ export default {
     ...mapGetters({
       userValid: 'userValid'
     })
+  },
+  beforeMount () {
+    console.log('beforeMount')
+    if (this.userValid) {
+      this.setClientValid(this.userValid)
+    }
   },
   methods: {
     setClientValid (valid = false) {
@@ -48,5 +64,12 @@ export default {
     margin: 0;
     padding: 0;
     position: relative;
+}
+.logout-btn {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+    font-size: 18px;
 }
 </style>
