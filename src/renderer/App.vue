@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-container style="height: 100%;">
-      <el-header style="background: #e5e9f2;height: 48px;">
+      <el-header style="background: #B3C0D1;height: 48px;">
         <div style="text-align: center;line-height: 48px;position: relative;">
           <span>QN</span>
           <span class="logout-btn" v-if="userValid === true" @click="logout"><i class="el-icon-setting"></i></span>
