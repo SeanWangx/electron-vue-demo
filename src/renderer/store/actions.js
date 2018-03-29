@@ -53,7 +53,12 @@ export default {
         }
       }).then(res => {
         // console.log(res)
-        commit(M.SET_BUCKETS, res)
+        commit(M.SET_BUCKETS, res.map(item => {
+          return {
+            name: item,
+            zone: null
+          }
+        }))
         resolve()
       }).catch(error => {
         // console.warn(error)

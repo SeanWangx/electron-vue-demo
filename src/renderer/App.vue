@@ -7,9 +7,9 @@
           <span class="logout-btn" v-if="userValid === true" @click="logout"><i class="el-icon-setting"></i></span>
         </div>
       </el-header>
-      <el-main style="height: 100%;">
+      <el-container style="height: 100%;">
         <router-view></router-view>
-      </el-main>
+      </el-container>
     </el-container>
   </div>
 </template>
