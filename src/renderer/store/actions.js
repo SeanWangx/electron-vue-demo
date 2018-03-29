@@ -14,6 +14,7 @@ export default {
         commit(M.SET_ACCCESS_KEY, accessKey)
         commit(M.SET_SECRET_KEY, secretKey)
         commit(M.SET_USER_VALID, true)
+        resolve()
       }).catch(error => {
         console.error(error)
       })

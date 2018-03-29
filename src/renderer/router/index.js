@@ -12,12 +12,12 @@ export default new Router({
     }, */
     {
       path: '/login',
-      name: 'login',
+      name: 'Login',
       component: () => import('@/views/Login')
     },
     {
       path: '/',
-      name: 'buckets',
+      name: 'Buckets',
       component: () => import('@/views/Buckets')
     },
     {

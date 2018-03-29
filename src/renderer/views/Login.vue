@@ -57,6 +57,8 @@ export default {
           this._login({
             accessKey: this.form.AccessKey,
             secretKey: this.form.SecretKey
+          }).then(() => {
+            this.$router.replace('/')
           })
         } else {
           console.log('error submit!!')

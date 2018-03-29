@@ -4,7 +4,7 @@
       <el-header style="background: #e5e9f2;height: 48px;">
         <div style="text-align: center;line-height: 48px;position: relative;">
           <span>QN</span>
-          <span class="logout-btn" v-if="userValid === true" @click="() => _logout()"><i class="el-icon-setting"></i></span>
+          <span class="logout-btn" v-if="userValid === true" @click="logout"><i class="el-icon-setting"></i></span>
         </div>
       </el-header>
       <el-main style="height: 100%;">
@@ -49,6 +49,11 @@ export default {
         // console.log(res)
       })
       ipcRenderer.send('SET_CLIENT_VALID', payload)
+    },
+    logout () {
+      this._logout().then(() => {
+        this.$router.replace('/login')
+      })
     }
   },
   watch: {
