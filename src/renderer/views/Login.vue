@@ -13,8 +13,7 @@
           </el-input>
         </el-form-item>
         <div>
-          <el-button v-show="userValid === false" size="mini" type="primary" @click="login">Login</el-button>
-          <el-button v-show="userValid === true" size="mini" type="default" @click="logout">Logout</el-button>
+          <el-button size="mini" type="primary" @click="login">Login</el-button>
         </div>
       </el-form>
     </div>
@@ -50,8 +49,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      _login: 'LOGIN',
-      _logout: 'LOGOUT'
+      _login: 'LOGIN'
     }),
     login () {
       this.$refs['form'].validate((valid) => {
@@ -65,9 +63,6 @@ export default {
           return false
         }
       })
-    },
-    logout () {
-      this._logout()
     }
   },
   watch: {
