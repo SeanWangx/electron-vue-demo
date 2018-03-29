@@ -22,7 +22,6 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { getAccessToken } from '@/utils/tools'
 import { actions as A } from '@/constant'
 export default {
   name: 'Login',
