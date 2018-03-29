@@ -11,9 +11,14 @@ export default new Router({
       component: require('@/components/LandingPage').default
     }, */
     {
-      path: '/',
+      path: '/login',
       name: 'login',
       component: () => import('@/views/Login')
+    },
+    {
+      path: '/',
+      name: 'buckets',
+      component: () => import('@/views/Buckets')
     },
     {
       path: '*',
