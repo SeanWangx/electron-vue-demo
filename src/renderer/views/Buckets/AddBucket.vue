@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   props: {
     visible: {
@@ -59,10 +60,10 @@ export default {
       }
     }
     let checkContent = (rule, value, callback) => {
-      if (/^[0-9a-zA-Z-]+$/g.test(value)) {
+      if (/^[0-9a-zA-Z-_]+$/g.test(value)) {
         callback()
       } else {
-        return callback(new Error('存储空间名称只能包含字母、数字、中划线'))
+        return callback(new Error('存储空间名称只能包含字母、数字、中划线、下划线'))
       }
     }
     return {
@@ -84,6 +85,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      createBucket: 'CREATE_BUCKET'
+    }),
     closeDialog () {
       this.$emit('close')
       this.visibleInner = false
@@ -96,8 +100,12 @@ export default {
     confirm () {
       this.$refs['form'].validate(valid => {
         if (valid) {
-          this.$emit('success', this.form)
-          this.closeDialog()
+          this.createBucket(this.form).then(res => {
+            this.$emit('success', this.form)
+            this.closeDialog()
+          }).catch(err => {
+            console.error(err)
+          })
         } else {
           console.warn('no')
         }

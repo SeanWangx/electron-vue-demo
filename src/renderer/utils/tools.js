@@ -4,7 +4,7 @@ import CryptoJs from 'crypto-js'
  * 安全转换base64
  * @param {*} v 字符串
  */
-const urlSafeBase64Encode = v => {
+export const urlSafeBase64Encode = v => {
   return v.toString(CryptoJs.enc.Base64).replace(/\//g, '_').replace(/\+/g, '-')
 }
 

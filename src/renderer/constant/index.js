@@ -1,7 +1,8 @@
 export const actions = {
   LOGIN: 'LOGIN',
   LOGOUT: 'LOGOUT',
-  FETCH_BUCKETS: 'FETCH_BUCKETS'
+  FETCH_BUCKETS: 'FETCH_BUCKETS',
+  CREATE_BUCKET: 'CREATE_BUCKET'
 }
 
 export const mutations = {

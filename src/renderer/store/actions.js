@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { actions as A, mutations as M } from '../constant'
-import { getAccessToken } from '../utils/tools'
+import { getAccessToken, urlSafeBase64Encode } from '../utils/tools'
 
 export default {
   /**
@@ -46,7 +46,7 @@ export default {
         reject(new Error('Missing keys'))
       }
       let accessToken = getAccessToken('/buckets', accessKey, secretKey)
-      axios.get('https://rs.qbox.me/buckets', {
+      axios.get('http://rs.qbox.me/buckets', {
         method: 'get',
         headers: {
           'Authorization': `QBox ${accessToken}`
@@ -60,10 +60,37 @@ export default {
           }
         }))
         resolve()
-      }).catch(error => {
-        // console.warn(error)
-        reject(error)
+      }).catch(err => {
+        // console.warn(err)
+        reject(err)
       })
+    })
+  },
+  /**
+   * 创建bucket
+   */
+  [A.CREATE_BUCKET] ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const { accessKey, secretKey } = state
+      if (!!accessKey && !!secretKey) {
+        const { name, region } = payload
+        let encodedBucketName = urlSafeBase64Encode(name)
+        console.log(encodedBucketName)
+        let accessToken = getAccessToken(`/mkbucketv2/${encodedBucketName}/region/${region}`, accessKey, secretKey)
+        axios.post(`http://rs.qiniu.com/mkbucketv2/${encodedBucketName}/region/${region}`, null, {
+          method: 'post',
+          headers: {
+            'Authorization': `QBox ${accessToken}`
+          }
+        }).then(res => {
+          console.log(res)
+          resolve()
+        }).catch(err => {
+          reject(err)
+        })
+      } else {
+        reject(new Error('缺失秘钥'))
+      }
     })
   }
 }
