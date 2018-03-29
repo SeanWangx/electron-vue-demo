@@ -21,7 +21,9 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import { getAccessToken } from '@/utils/tools'
+import { actions as A } from '@/constant'
 export default {
   name: 'Login',
   data () {
@@ -43,23 +45,16 @@ export default {
     }
   },
   methods: {
-    _login () {
-      let accessToken = getAccessToken('/buckets', this.form.AccessKey, this.form.SecretKey)
-      this.$http.get('https://rs.qbox.me/buckets', {
-        method: 'get',
-        headers: {
-          'Authorization': `QBox ${accessToken}`
-        }
-      }).then(res => {
-        // todo
-      }).catch(error => {
-        console.warn(error)
-      })
-    },
+    ...mapActions({
+      _login: A.LOGIN
+    }),
     login () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this._login()
+          this._login({
+            accessKey: this.form.AccessKey,
+            secretKey: this.form.SecretKey
+          })
         } else {
           console.log('error submit!!')
           return false

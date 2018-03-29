@@ -1,1 +1,11 @@
-export default {}
+export const actions = {
+  LOGIN: 'LOGIN',
+  FETCH_BUCKETS: 'FETCH_BUCKETS'
+}
+
+export const mutations = {
+  SET_ACCCESS_KEY: 'SET_ACCESS_KEY',
+  SET_SECRET_KEY: 'SET_SECRET_KEY',
+  SET_USER_VALID: 'SET_USER_VALID',
+  SET_BUCKETS: 'SET_BUCKETS'
+}
