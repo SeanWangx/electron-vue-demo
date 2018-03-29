@@ -101,7 +101,7 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           this.createBucket(this.form).then(res => {
-            this.$emit('success', this.form)
+            this.$emit('success')
             this.closeDialog()
           }).catch(err => {
             console.error(err)

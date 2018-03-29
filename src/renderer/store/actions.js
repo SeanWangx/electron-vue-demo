@@ -32,7 +32,7 @@ export default {
   /**
    * 获取bucket列表
    */
-  [A.FETCH_BUCKETS] ({ commit, state }, payload) {
+  [A.FETCH_BUCKETS] ({ commit, state }, payload = {}) {
     return new Promise((resolve, reject) => {
       let accessKey
       let secretKey
@@ -74,8 +74,7 @@ export default {
       const { accessKey, secretKey } = state
       if (!!accessKey && !!secretKey) {
         const { name, region } = payload
-        let encodedBucketName = urlSafeBase64Encode(name)
-        console.log(encodedBucketName)
+        let encodedBucketName = urlSafeBase64Encode(Buffer.from(name).toString('base64'))
         let accessToken = getAccessToken(`/mkbucketv2/${encodedBucketName}/region/${region}`, accessKey, secretKey)
         axios.post(`http://rs.qiniu.com/mkbucketv2/${encodedBucketName}/region/${region}`, null, {
           method: 'post',

@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import VAddBucket from './AddBucket'
 export default {
   data () {
@@ -33,9 +33,15 @@ export default {
     })
   },
   methods: {
+    ...mapActions({
+      fetchBuckets: 'FETCH_BUCKETS'
+    }),
     handleAddSuccess () {
-      // TODO
-      console.log('handle add bucket successfully.')
+      this.fetchBuckets({}).then(() => {
+        console.log('fetch bucket list successfully')
+      }).catch(error => {
+        console.error('fetch bucket list failed', error)
+      })
     }
   },
   components: {
