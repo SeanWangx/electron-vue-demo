@@ -20,6 +20,15 @@ export default {
     })
   },
   /**
+   * 登出
+   */
+  [A.LOGOUT] ({ commit }) {
+    commit(M.SET_BUCKETS, [])
+    commit(M.SET_ACCCESS_KEY, '')
+    commit(M.SET_SECRET_KEY, '')
+    commit(M.SET_USER_VALID, false)
+  },
+  /**
    * 获取bucket列表
    */
   [A.FETCH_BUCKETS] ({ commit, state }, payload) {

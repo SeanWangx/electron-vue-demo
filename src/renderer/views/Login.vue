@@ -13,7 +13,8 @@
           </el-input>
         </el-form-item>
         <div>
-          <el-button size="small" type="primary" @click="login">Login</el-button>
+          <el-button v-show="userValid === false" size="small" type="primary" @click="login">Login</el-button>
+          <el-button v-show="userValid === true" size="small" type="default" @click="logout">Logout</el-button>
         </div>
       </el-form>
     </div>
@@ -21,8 +22,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import { actions as A } from '@/constant'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'Login',
   data () {
@@ -43,9 +43,18 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters({
+      userValid: 'userValid'
+    })
+  },
+  mounted () {
+    console.log('userValid', this.userValid)
+  },
   methods: {
     ...mapActions({
-      _login: A.LOGIN
+      _login: 'LOGIN',
+      _logout: 'LOGOUT'
     }),
     login () {
       this.$refs['form'].validate((valid) => {
@@ -59,6 +68,9 @@ export default {
           return false
         }
       })
+    },
+    logout () {
+      this._logout()
     }
   },
   watch: {

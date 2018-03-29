@@ -5,14 +5,39 @@
 </template>
 
 <script>
-  export default {
-    name: 'electron-vue-demo',
-    data () {
-      return {
+import { mapGetters } from 'vuex'
+import { ipcRenderer } from 'electron'
+import uuidv1 from 'uuid/v1'
 
+export default {
+  name: 'electron-vue-demo',
+  data () {
+    return {}
+  },
+  computed: {
+    ...mapGetters({
+      userValid: 'userValid'
+    })
+  },
+  methods: {
+    setClientValid (valid = false) {
+      let uuid = uuidv1()
+      let payload = {
+        uuid,
+        data: { valid }
       }
+      ipcRenderer.once(`SET_CLIENT_VALID_SUCCESS_${uuid}`, (event, res) => {
+        // console.log(res)
+      })
+      ipcRenderer.send('SET_CLIENT_VALID', payload)
+    }
+  },
+  watch: {
+    userValid (newVal) {
+      this.setClientValid(!!newVal)
     }
   }
+}
 </script>
 
 <style scoped>

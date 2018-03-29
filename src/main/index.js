@@ -1,7 +1,6 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain } from 'electron'
-import axios from 'axios'
 
 /**
  * Set `__static` path to static files in production
@@ -22,9 +21,9 @@ function createWindow () {
    */
   mainWindow = new BrowserWindow({
     webPreferences: { webSecurity: false },
+    useContentSize: true,
     resizable: true,
     height: 600,
-    useContentSize: true,
     width: 510
   })
 
@@ -35,40 +34,22 @@ function createWindow () {
   })
 
   // register channel listener
-  ipcMain.on('TEST_CHANNEL', (event, payload) => {
+  // set client valid
+  ipcMain.on('SET_CLIENT_VALID', (event, payload) => {
     const { data, uuid } = payload
-    const { url, authorization } = data
-    axios.get(url, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': authorization
-      }
-    }).then(res => {
-      console.log(res)
-      event.sender.send(`TEST_CHANNEL_SUCCESS_${uuid}`, res)
-    }).catch(err => {
-      console.warn(err)
-      event.sender.send(`TEST_CHANNEL_SUCCESS_${uuid}`, err)
-    })
-  })
-
-  // LOGIN
-  ipcMain.on('LOGIN', (event, payload) => {
-    // mainWindow.setResizable(true)
-    // mainWindow.setMinimumSize(800, 600)
-    // mainWindow.setSize(800, 600)
-    // mainWindow.center()
-    const { data, uuid } = payload
-    event.sender.send(`LOGIN_SUCCESS_${uuid}`, data)
-  })
-  // LOGOUT
-  ipcMain.on('LOGOUT', (event, payload) => {
-    // mainWindow.setResizable(false)
-    // mainWindow.setMinimumSize(510, 600)
-    // mainWindow.setSize(510, 600)
-    // mainWindow.center()
-    const { data, uuid } = payload
-    event.sender.send(`LOGOUT_SUCCESS_${uuid}`, data)
+    const { valid = false } = data
+    if (valid) {
+      mainWindow.setResizable(true)
+      mainWindow.setMinimumSize(800, 600)
+      mainWindow.setSize(800, 600)
+      mainWindow.center()
+    } else {
+      mainWindow.setResizable(false)
+      mainWindow.setMinimumSize(510, 600)
+      mainWindow.setSize(510, 600)
+      mainWindow.center()
+    }
+    event.sender.send(`SET_CLIENT_VALID_SUCCESS_${uuid}`)
   })
 }
 

@@ -7,7 +7,7 @@ export default {
   get (key, defaultValue = '') {
     if (!!key === true) {
       let _v = window.localStorage.getItem(key)
-      return _v ? JSON.stringify(_v) : defaultValue
+      return _v ? JSON.parse(_v) : defaultValue
     }
   }
 }
