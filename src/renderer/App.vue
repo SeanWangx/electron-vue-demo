@@ -4,7 +4,7 @@
       <el-header style="background: #e5e9f2;height: 48px;">
         <div style="text-align: center;line-height: 48px;position: relative;">
           <span>QN</span>
-          <span class="logout-btn" v-if="userValid === true"><i class="el-icon-setting"></i></span>
+          <span class="logout-btn" v-if="userValid === true" @click="() => _logout()"><i class="el-icon-setting"></i></span>
         </div>
       </el-header>
       <el-main style="height: 100%;">
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { ipcRenderer } from 'electron'
 import uuidv1 from 'uuid/v1'
 
@@ -36,6 +36,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      _logout: 'LOGOUT'
+    }),
     setClientValid (valid = false) {
       let uuid = uuidv1()
       let payload = {
@@ -67,8 +70,9 @@ export default {
 }
 .logout-btn {
     display: inline-block;
+    padding: 0 15px;
     position: absolute;
-    right: 0;
+    right: -20px;
     cursor: pointer;
     font-size: 18px;
 }
