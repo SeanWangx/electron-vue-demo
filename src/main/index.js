@@ -40,8 +40,8 @@ function createWindow () {
     const { valid = false } = data
     if (valid) {
       mainWindow.setResizable(true)
-      mainWindow.setMinimumSize(800, 600)
-      mainWindow.setSize(800, 600)
+      mainWindow.setMinimumSize(1024, 768)
+      mainWindow.setSize(1024, 768)
       mainWindow.center()
     } else {
       mainWindow.setResizable(false)
