@@ -15,9 +15,9 @@
       label-position="left"
       :model="form"
       :rules="rules">
-      <el-form-item label="存储空间名称" prop="name">
+      <el-form-item label="存储空间名称" prop="bucket">
         <el-input clearable
-          v-model="form.name"
+          v-model="form.bucket"
           placeholder="请输入存储空间名称"
           :maxlength="64"
           :minlength="4"></el-input>
@@ -43,7 +43,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 export default {
   props: {
     visible: {
@@ -85,9 +84,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      createBucket: 'CREATE_BUCKET'
-    }),
     closeDialog () {
       this.$emit('close')
       this.visibleInner = false
@@ -100,12 +96,8 @@ export default {
     confirm () {
       this.$refs['form'].validate(valid => {
         if (valid) {
-          this.createBucket(this.form).then(res => {
-            this.$emit('success')
-            this.closeDialog()
-          }).catch(err => {
-            console.error(err)
-          })
+          this.$emit('success', this.form)
+          this.closeDialog()
         } else {
           console.warn('no')
         }

@@ -73,8 +73,8 @@ export default {
     return new Promise((resolve, reject) => {
       const { accessKey, secretKey } = state
       if (!!accessKey && !!secretKey) {
-        const { name, region } = payload
-        let encodedBucketName = urlSafeBase64Encode(Buffer.from(name).toString('base64'))
+        const { bucket, region } = payload
+        let encodedBucketName = urlSafeBase64Encode(Buffer.from(bucket).toString('base64'))
         let accessToken = getAccessToken(`/mkbucketv2/${encodedBucketName}/region/${region}`, accessKey, secretKey)
         axios.post(`http://rs.qiniu.com/mkbucketv2/${encodedBucketName}/region/${region}`, null, {
           method: 'post',
@@ -82,7 +82,6 @@ export default {
             'Authorization': `QBox ${accessToken}`
           }
         }).then(res => {
-          console.log(res)
           resolve()
         }).catch(err => {
           reject(err)

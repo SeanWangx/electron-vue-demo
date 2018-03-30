@@ -34,14 +34,20 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchBuckets: 'FETCH_BUCKETS'
+      fetchBuckets: 'FETCH_BUCKETS',
+      createBucket: 'CREATE_BUCKET'
     }),
-    handleAddSuccess () {
-      this.fetchBuckets({}).then(() => {
-        console.log('fetch bucket list successfully')
-      }).catch(error => {
-        console.error('fetch bucket list failed', error)
-      })
+    handleAddSuccess (form = {}) {
+      const { bucket, region } = form
+      if (!!bucket && !!region) {
+        this.createBucket({ bucket, region }).then(res => {
+          return this.fetchBuckets({})
+        }).then(() => {
+          console.log('fetch bucket list successfully')
+        }).catch(err => {
+          console.error(err)
+        })
+      }
     }
   },
   components: {
