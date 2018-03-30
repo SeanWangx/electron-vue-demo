@@ -2,8 +2,9 @@
   <el-container style="width: 100%;height: 100%;">
     <el-aside style="width: 200px;">
       <el-menu style="height: calc(100% - 56px);overflow-y: auto">
-        <el-menu-item v-for="(item, index) in buckets" :key="index" :index="index.toString()">
+        <el-menu-item class="bucket-item" v-for="(item, index) in buckets" :key="index" :index="index.toString()">
           <span slot="title">{{ item.name }}</span>
+          <el-button @click.stop="() => handeDelBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
         </el-menu-item>
       </el-menu>
       <div class="add-bucket">
@@ -48,6 +49,10 @@ export default {
           console.error(err)
         })
       }
+    },
+    handeDelBucket (bucket) {
+      // TODO
+      console.log('删除bucket', bucket)
     }
   },
   components: {
@@ -57,6 +62,20 @@ export default {
 </script>
 
 <style scoped>
+.bucket-item {
+    padding-right: 30px;
+}
+.bucket-item .del-bucket {
+    display: none;
+}
+.bucket-item:hover .del-bucket {
+    display: inline-block;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    border: none;
+    color: inherit;
+}
 .add-bucket {
     display: block;
     width: 100%;
