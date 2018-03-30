@@ -9,9 +9,14 @@ export default {
       store.dispatch('STOP_LOADING')
       return Promise.reject(error)
     }) */
+    axios.defaults.validateStatus = status => true
     axios.interceptors.response.use(response => {
+      if (response.status !== 200 && response.data.error) {
+        Vue.prototype.$message.error(response.data.error)
+      }
       return response.status === 200 ? response.data : Promise.reject(response)
-    }, (error, v) => {
+    }, error => {
+      console.log('error', error)
       return Promise.reject(error)
     })
 
