@@ -1,5 +1,5 @@
 {
-  "name": "electron-vue-demo",
+  "name": "tiny",
   "version": "0.0.0",
   "author": "SeanWangx <1971822513@qq.com>",
   "description": "An electron-vue project",
@@ -19,7 +19,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "electron-vue-demo",
+    "productName": "tiny",
     "appId": "org.simulatedgreg.electron-vue",
     "directories": {
       "output": "build"

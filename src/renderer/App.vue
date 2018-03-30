@@ -20,7 +20,7 @@ import { ipcRenderer } from 'electron'
 import uuidv1 from 'uuid/v1'
 
 export default {
-  name: 'electron-vue-demo',
+  name: 'tiny',
   data () {
     return {}
   },
