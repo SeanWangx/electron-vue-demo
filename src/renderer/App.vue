@@ -30,7 +30,6 @@ export default {
     })
   },
   beforeMount () {
-    console.log('beforeMount')
     if (this.userValid) {
       this.setClientValid(this.userValid)
     }

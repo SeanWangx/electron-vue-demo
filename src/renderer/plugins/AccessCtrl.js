@@ -16,7 +16,6 @@ export default {
       }
       return response.status === 200 ? response.data : Promise.reject(response)
     }, error => {
-      console.log('error', error)
       return Promise.reject(error)
     })
 
