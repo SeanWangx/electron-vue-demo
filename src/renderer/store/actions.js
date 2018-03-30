@@ -90,5 +90,29 @@ export default {
         reject(new Error('缺失秘钥'))
       }
     })
+  },
+  /**
+   * 删除bucket
+   */
+  [A.DELETE_BUCKET] ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const { accessKey, secretKey } = state
+      if (!!accessKey && !!secretKey) {
+        const { bucket } = payload
+        let accessToken = getAccessToken(`/drop/${bucket}`, accessKey, secretKey)
+        axios.post(`http://rs.qiniu.com/drop/${bucket}`, null, {
+          method: 'post',
+          headers: {
+            'Authorization': `QBox ${accessToken}`
+          }
+        }).then(res => {
+          resolve()
+        }).catch(err => {
+          reject(err)
+        })
+      } else {
+        reject(new Error('缺失秘钥'))
+      }
+    })
   }
 }

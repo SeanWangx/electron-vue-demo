@@ -36,7 +36,8 @@ export default {
   methods: {
     ...mapActions({
       fetchBuckets: 'FETCH_BUCKETS',
-      createBucket: 'CREATE_BUCKET'
+      createBucket: 'CREATE_BUCKET',
+      deleteBucket: 'DELETE_BUCKET'
     }),
     handleAddSuccess (form = {}) {
       const { bucket, region } = form
@@ -51,8 +52,13 @@ export default {
       }
     },
     handeDelBucket (bucket) {
-      // TODO
-      console.log('删除bucket', bucket)
+      this.deleteBucket({ bucket }).then(res => {
+        return this.fetchBuckets({})
+      }).then(() => {
+        console.log('fetch bucket list successfully')
+      }).catch(err => {
+        console.error(err)
+      })
     }
   },
   components: {
