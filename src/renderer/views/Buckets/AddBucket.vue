@@ -68,11 +68,11 @@ export default {
     return {
       visibleInner: this.visible,
       form: {
-        name: '',
+        bucket: '',
         region: 'z0'
       },
       rules: {
-        name: [
+        bucket: [
           { required: true, message: '请输入存储空间名称', trigger: 'change' },
           { validator: checkLength, trigger: 'change' },
           { validator: checkContent, trigger: 'change' }
