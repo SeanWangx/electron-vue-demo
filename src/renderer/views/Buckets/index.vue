@@ -1,7 +1,7 @@
 <template>
   <el-container style="width: 100%;height: 100%;">
     <el-aside style="width: 200px;">
-      <el-menu style="height: calc(100% - 56px);overflow-y: auto">
+      <el-menu style="height: calc(100% - 48px);overflow-y: auto">
         <el-menu-item class="bucket-item" v-for="(item, index) in buckets" :key="index" :index="index.toString()">
           <span slot="title">{{ item.name }}</span>
           <el-button @click.stop="() => handeDelBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
@@ -70,6 +70,8 @@ export default {
 <style scoped>
 .bucket-item {
     padding-right: 30px;
+    height: 48px;
+    line-height: 48px;
 }
 .bucket-item .del-bucket {
     display: none;
@@ -85,10 +87,10 @@ export default {
 .add-bucket {
     display: block;
     width: 100%;
-    height: 56px;
+    height: 48px;
     margin: 0;
     padding: 0 20px;
-    line-height: 56px;
+    line-height: 48px;
     box-sizing: border-box;
     background: #D3DCE6;
 }
