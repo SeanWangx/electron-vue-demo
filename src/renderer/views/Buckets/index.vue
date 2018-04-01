@@ -10,17 +10,20 @@
       <div class="add-bucket">
         <el-button @click="addBktVisible = true" style="font-weight: 200;" type="text" icon="el-icon-circle-plus">新增</el-button>
       </div>
+      <v-add-bucket
+        :visible.sync="addBktVisible"
+        @close="addBktVisible = false"
+        @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
-    <el-main style="background: #ccc;"></el-main>
-    <v-add-bucket
-      :visible.sync="addBktVisible"
-      @close="addBktVisible = false"
-      @success="handleAddSuccess"></v-add-bucket>
+    <el-main style="background: #ccc;">
+      <div id="mount-pointed"></div>
+    </el-main>
   </el-container>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import showMessage from '@/components/Message'
 import VAddBucket from './AddBucket'
 export default {
   data () {
@@ -52,13 +55,14 @@ export default {
       }
     },
     handeDelBucket (bucket) {
-      this.deleteBucket({ bucket }).then(res => {
-        return this.fetchBuckets({})
-      }).then(() => {
-        console.log('fetch bucket list successfully')
-      }).catch(err => {
-        console.error(err)
-      })
+      // this.deleteBucket({ bucket }).then(res => {
+      //   return this.fetchBuckets({})
+      // }).then(() => {
+      //   console.log('fetch bucket list successfully')
+      // }).catch(err => {
+      //   console.error(err)
+      // })
+      showMessage('Hello World')
     }
   },
   components: {
