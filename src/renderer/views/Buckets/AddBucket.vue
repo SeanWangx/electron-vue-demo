@@ -7,7 +7,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :visible.sync="visibleInner"
-    @open="handleOpen">
+    @close="handleClose">
     <el-form
       size="small"
       ref="form"
@@ -88,7 +88,7 @@ export default {
       this.$emit('close')
       this.visibleInner = false
     },
-    handleOpen () {
+    handleClose () {
       if (this.$refs['form']) {
         this.$refs['form'].resetFields()
       }
