@@ -24,6 +24,7 @@
 
 <script>
 export default {
+  name: 'Confirm',
   props: {
     title: {
       type: String,

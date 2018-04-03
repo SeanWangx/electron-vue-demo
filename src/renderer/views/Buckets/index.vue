@@ -67,6 +67,10 @@ export default {
       showConfirm({
         title: '提示',
         content: `是否确认删除: ${bucket} ?`
+      }).then(() => {
+        console.log('确认')
+      }).catch(() => {
+        console.warn('取消')
       })
     }
   },
