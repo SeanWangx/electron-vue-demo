@@ -1,7 +1,7 @@
 import Vue from 'vue'
-const Confirm = Vue.extend({
-  render: h => h(require('./Confirm.vue'))
-})
+import ConfirmComponent from './index.vue'
+const Confirm = Vue.extend(ConfirmComponent)
+
 const showConfirm = (props = {}) => {
   const instance = new Confirm({
     propsData: { ...props }

@@ -16,14 +16,15 @@
         @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
     <el-main style="background: #ccc;">
-      <div id="mount-pointed"></div>
+      <div id="mount-point"></div>
     </el-main>
   </el-container>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import showMessage from '@/components/Message'
+// import showMessage from '@/components/Message'
+import showConfirm from '@/components/Confirm'
 import VAddBucket from './AddBucket'
 export default {
   data () {
@@ -62,7 +63,11 @@ export default {
       // }).catch(err => {
       //   console.error(err)
       // })
-      showMessage('Hello World')
+      // showMessage('Hello')
+      showConfirm({
+        title: '提示',
+        content: `是否确认删除: ${bucket} ?`
+      })
     }
   },
   components: {

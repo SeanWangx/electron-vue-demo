@@ -1,11 +1,11 @@
 <template>
   <el-dialog
-    center="true"
-    append-to-body="true"
-    width="500px"
+    width="400px"
     class="confirm-dialog"
     :title="title"
     :visible.sync="visible"
+    :center="true"
+    :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false">
 
@@ -15,14 +15,10 @@
     <div class="confirm-content"
       v-else>{{ content }}</div>
 
-    <div style="text-align:center;">
-      <el-button size="small" type="primary" @click="confirm">
-        <span style="display:inline-block;width: 80px;">{{ confirmButtonText }}</span>
-      </el-button>
-      <el-button v-show="showClose" size="small" type="default" @click="cancel">
-        <span style="display:inline-block;width: 80px;">{{ cancelButtonText }}</span>
-      </el-button>
-    </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button size="mini" @click="confirm" type="primary">{{ confirmButtonText }}</el-button>
+      <el-button size="mini" @click="cancel" type="default" v-show="showClose">{{ cancelButtonText }}</el-button>
+    </span>
   </el-dialog>
 </template>
 
@@ -68,7 +64,7 @@ export default {
   methods: {
     close () {
       this.visible = false
-      this.$destory()
+      this.$destroy()
     },
     confirm () {
       this.$emit('confirm')
@@ -89,8 +85,8 @@ export default {
     position: relative;
     width: 100%;
     height: auto;
-    margin: 0 0 30px 0;
-    padding: 30px 0;
+    margin: 0;
+    padding: 0;
     text-align: center;
     color: #333;
     font-size: 14px;
