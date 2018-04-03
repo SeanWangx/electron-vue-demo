@@ -6,7 +6,7 @@
           v-for="(item, index) in buckets"
           :key="index"
           :index="index.toString()"
-          @click="e => $noRepeat(handleSearchBucket, e, item.name)">
+          @click="e => $noRepeat(handleClickBucket, e, item.name)">
           <span slot="title">{{ item.name }}</span>
           <el-button @click.stop="() => handeDelBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
         </el-menu-item>
@@ -20,6 +20,11 @@
         @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
     <el-main style="background: #ccc;">
+      <el-select size="small" v-model="domain" style="width: 300px;">
+        <el-option v-for="(item, index) in domains" :key="index"
+          :label="item" :value="item">{{ item }}</el-option>
+      </el-select>
+      <el-button size="small" @click="handleCopyDomain">复制</el-button>
     </el-main>
   </el-container>
 </template>
@@ -31,6 +36,11 @@ import VAddBucket from './AddBucket'
 export default {
   data () {
     return {
+      domains: [],
+      marker: '',
+      items: [],
+      domain: '',
+
       addBktVisible: false
     }
   },
@@ -44,15 +54,32 @@ export default {
       fetchBuckets: 'FETCH_BUCKETS',
       createBucket: 'CREATE_BUCKET',
       deleteBucket: 'DELETE_BUCKET',
-      fetchList: 'FETCH_LIST'
+      fetchList: 'FETCH_LIST',
+      fetchBucketDomain: 'FETCH_BUCKET_DOMAIN'
     }),
-    async handleSearchBucket (bucket) {
+    async handleClickBucket (bucket) {
+      this.domains = []
+      this.domain = ''
+      this.marker = ''
+      this.items = []
       try {
-        let res = await this.fetchList({ bucket })
-        console.log(res)
+        const domains = await this.fetchBucketDomain({ bucket })
+        this.domains = [...domains]
+        this.domain = this.domains[0]
+        const resObj = await this.fetchList({ bucket })
+        const { marker = '', items = [] } = resObj
+        this.marker = marker
+        this.items = items
       } catch (e) {
         console.warn(e)
+      } finally {
+        console.log(this.domains)
+        console.log(this.marker)
+        console.log(this.items)
       }
+    },
+    handleCopyDomain () {
+      // TODO
     },
     handleAddSuccess (form = {}) {
       const { bucket, region } = form
