@@ -2,7 +2,11 @@
   <el-container style="width: 100%;height: 100%;">
     <el-aside style="width: 200px;">
       <el-menu style="height: calc(100% - 48px);overflow-y: auto">
-        <el-menu-item class="bucket-item" v-for="(item, index) in buckets" :key="index" :index="index.toString()">
+        <el-menu-item class="bucket-item"
+          v-for="(item, index) in buckets"
+          :key="index"
+          :index="index.toString()"
+          @click="e => $noRepeat(handleSearchBucket, e, item.name)">
           <span slot="title">{{ item.name }}</span>
           <el-button @click.stop="() => handeDelBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
         </el-menu-item>
@@ -16,7 +20,6 @@
         @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
     <el-main style="background: #ccc;">
-      <div id="mount-point"></div>
     </el-main>
   </el-container>
 </template>
@@ -24,6 +27,13 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import VAddBucket from './AddBucket'
+
+const sleep = (time = 3000) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => { resolve() }, time)
+  })
+}
+
 export default {
   data () {
     return {
@@ -41,6 +51,13 @@ export default {
       createBucket: 'CREATE_BUCKET',
       deleteBucket: 'DELETE_BUCKET'
     }),
+    async handleSearchBucket (bucket) {
+      await sleep()
+      console.log(bucket)
+    },
+    handleClick () {
+      console.log('handle click')
+    },
     handleAddSuccess (form = {}) {
       const { bucket, region } = form
       if (!!bucket && !!region) {

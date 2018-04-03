@@ -6,6 +6,7 @@ import store from './store'
 import AccessCtrl from './plugins/AccessCtrl'
 import ElementUI from 'element-ui'
 import showConfirm from '@/components/Confirm'
+import noRepeat from '@/utils/noRepeat'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/style'
 
@@ -16,6 +17,7 @@ Vue.use(AccessCtrl, store, router)
 
 Vue.http = Vue.prototype.$http = axios
 Vue.showConfirm = Vue.prototype.$showConfirm = showConfirm
+Vue.noRepeat = Vue.prototype.$noRepeat = noRepeat
 
 Vue.config.productionTip = false
 
