@@ -138,8 +138,36 @@ export default {
         } else {
           let uri = `/list?bucket=${bucket}${Marker}${Limit}${Prefix}${Delimiter}`
           let accessToken = getAccessToken(uri, accessKey, secretKey)
-          console.log(accessToken)
           axios.get(`http://rsf.qbox.me${uri}`, {
+            method: 'get',
+            headers: {
+              'Authorization': `QBox ${accessToken}`
+            }
+          }).then(res => {
+            resolve(res)
+          }).catch(err => {
+            reject(err)
+          })
+        }
+      } else {
+        reject(new Error('缺失秘钥'))
+      }
+    })
+  },
+  /**
+   * 获取空间域名
+   */
+  [A.FETCH_BUCKET_DOMAIN] ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const { accessKey, secretKey } = state
+      if (!!accessKey && !!secretKey) {
+        const { bucket } = payload
+        if (!!bucket === false) {
+          reject(new Error('缺失存储空间名'))
+        } else {
+          let uri = `/v6/domain/list?tbl=${bucket}`
+          let accessToken = getAccessToken(uri, accessKey, secretKey)
+          axios.get(`http://api.qiniu.com${uri}`, {
             method: 'get',
             headers: {
               'Authorization': `QBox ${accessToken}`
