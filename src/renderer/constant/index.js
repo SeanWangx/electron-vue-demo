@@ -3,7 +3,8 @@ export const actions = {
   LOGOUT: 'LOGOUT',
   FETCH_BUCKETS: 'FETCH_BUCKETS',
   CREATE_BUCKET: 'CREATE_BUCKET',
-  DELETE_BUCKET: 'DELETE_BUCKET'
+  DELETE_BUCKET: 'DELETE_BUCKET',
+  FETCH_LIST: 'FETCH_LIST'
 }
 
 export const mutations = {

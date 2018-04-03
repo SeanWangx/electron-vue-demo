@@ -114,5 +114,45 @@ export default {
         reject(new Error('缺失秘钥'))
       }
     })
+  },
+  /**
+   * 获取存储空间中内容
+   */
+  [A.FETCH_LIST] ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const { accessKey, secretKey } = state
+      if (!!accessKey && !!secretKey) {
+        const {
+          bucket,
+          marker = '',
+          limit = '5',
+          prefix = '',
+          delimiter = ''
+        } = payload
+        let Marker = marker ? `&marker=${marker}` : ''
+        let Limit = limit ? `&limit=${limit}` : ''
+        let Prefix = prefix ? `&prefix=${prefix}` : ''
+        let Delimiter = delimiter ? `&prefix=${delimiter}` : ''
+        if (!!bucket === false) {
+          reject(new Error('缺失存储空间名'))
+        } else {
+          let uri = `/list?bucket=${bucket}${Marker}${Limit}${Prefix}${Delimiter}`
+          let accessToken = getAccessToken(uri, accessKey, secretKey)
+          console.log(accessToken)
+          axios.get(`http://rsf.qbox.me${uri}`, {
+            method: 'get',
+            headers: {
+              'Authorization': `QBox ${accessToken}`
+            }
+          }).then(res => {
+            resolve(res)
+          }).catch(err => {
+            reject(err)
+          })
+        }
+      } else {
+        reject(new Error('缺失秘钥'))
+      }
+    })
   }
 }

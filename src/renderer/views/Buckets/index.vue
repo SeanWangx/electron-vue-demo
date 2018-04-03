@@ -28,12 +28,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import VAddBucket from './AddBucket'
 
-const sleep = (time = 3000) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => { resolve() }, time)
-  })
-}
-
 export default {
   data () {
     return {
@@ -49,14 +43,16 @@ export default {
     ...mapActions({
       fetchBuckets: 'FETCH_BUCKETS',
       createBucket: 'CREATE_BUCKET',
-      deleteBucket: 'DELETE_BUCKET'
+      deleteBucket: 'DELETE_BUCKET',
+      fetchList: 'FETCH_LIST'
     }),
     async handleSearchBucket (bucket) {
-      await sleep()
-      console.log(bucket)
-    },
-    handleClick () {
-      console.log('handle click')
+      try {
+        let res = await this.fetchList({ bucket })
+        console.log(res)
+      } catch (e) {
+        console.warn(e)
+      }
     },
     handleAddSuccess (form = {}) {
       const { bucket, region } = form

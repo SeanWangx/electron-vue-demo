@@ -2,13 +2,12 @@ import axios from 'axios'
 
 export default {
   install: (Vue, store, router) => {
-    /* axios.interceptors.request.use(request => {
-      store.dispatch('START_LOADING')
+    axios.interceptors.request.use(request => {
+      // console.log(request)
       return request
     }, error => {
-      store.dispatch('STOP_LOADING')
       return Promise.reject(error)
-    }) */
+    })
     axios.defaults.validateStatus = status => true
     axios.interceptors.response.use(response => {
       if (response.status !== 200 && response.data.error) {
