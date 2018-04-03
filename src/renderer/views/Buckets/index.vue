@@ -23,8 +23,6 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-// import showMessage from '@/components/Message'
-import showConfirm from '@/components/Confirm'
 import VAddBucket from './AddBucket'
 export default {
   data () {
@@ -56,19 +54,17 @@ export default {
       }
     },
     handeDelBucket (bucket) {
-      // this.deleteBucket({ bucket }).then(res => {
-      //   return this.fetchBuckets({})
-      // }).then(() => {
-      //   console.log('fetch bucket list successfully')
-      // }).catch(err => {
-      //   console.error(err)
-      // })
-      // showMessage('Hello')
-      showConfirm({
+      this.$showConfirm({
         title: '提示',
         content: `是否确认删除: ${bucket} ?`
       }).then(() => {
-        console.log('确认')
+        this.deleteBucket({ bucket }).then(res => {
+          return this.fetchBuckets({})
+        }).then(() => {
+          console.log('fetch bucket list successfully')
+        }).catch(err => {
+          console.error(err)
+        })
       }).catch(() => {
         console.warn('取消')
       })
