@@ -6,7 +6,7 @@
           v-for="(item, index) in buckets"
           :key="index"
           :index="index.toString()"
-          @click="e => $noRepeat(handleClickBucket, e, item.name)">
+          @click="e => $noRepeat(handleClickBucket, e, item)">
           <span slot="title">{{ item.name }}</span>
           <el-button @click.stop="() => handeDelBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
         </el-menu-item>
@@ -59,7 +59,8 @@ export default {
       createBucket: 'CREATE_BUCKET',
       deleteBucket: 'DELETE_BUCKET',
       fetchList: 'FETCH_LIST',
-      fetchBucketDomain: 'FETCH_BUCKET_DOMAIN'
+      fetchBucketDomain: 'FETCH_BUCKET_DOMAIN',
+      fetchBucketZone: 'FETCH_BUCKET_ZONE'
     }),
     async handleClickBucket (bucket) {
       this.domains = []
@@ -67,19 +68,17 @@ export default {
       this.marker = ''
       this.items = []
       try {
-        const domains = await this.fetchBucketDomain({ bucket })
+        !!bucket['name'] || await this.fetchBucketZone({ bucket: bucket['name'] })
+
+        const domains = await this.fetchBucketDomain({ bucket: bucket['name'] })
+        const resObj = await this.fetchList({ bucket: bucket['name'] })
+        const { marker = '', items = [] } = resObj
         this.domains = [...domains]
         this.domain = this.domains[0] || ''
-        const resObj = await this.fetchList({ bucket })
-        const { marker = '', items = [] } = resObj
         this.marker = marker
         this.items = items
       } catch (e) {
         console.warn(e)
-      } finally {
-        console.log(this.domains)
-        console.log(this.marker)
-        console.log(this.items)
       }
     },
     handleCopyDomain () {

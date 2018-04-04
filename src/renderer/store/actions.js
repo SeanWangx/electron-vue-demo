@@ -182,5 +182,48 @@ export default {
         reject(new Error('缺失秘钥'))
       }
     })
+  },
+  /**
+   * 获取存储空间区域zone
+   */
+  [A.FETCH_BUCKET_ZONE] ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const { accessKey, secretKey } = state
+      if (!!accessKey && !!secretKey) {
+        const { bucket } = payload
+        if (!!bucket === false) {
+          reject(new Error('缺失存储空间名'))
+        } else {
+          let uri = `/v2/query?ak=${accessKey}&bucket=${bucket}`
+          let accessToken = getAccessToken(uri, accessKey, secretKey)
+          axios.get(`http://uc.qbox.me${uri}`, {
+            methods: 'get',
+            headers: {
+              'Authorization': `QBox ${accessToken}`
+            }
+          }).then(res => {
+            let uploadURL = res['up']['src']['main'][0]
+            let zone = null
+            if (uploadURL.indexOf('up-as0') !== -1) {
+              zone = 'as0'
+            } else if (uploadURL.indexOf('up-na0') !== -1) {
+              zone = 'na0'
+            } else if (uploadURL.indexOf('up-z2') !== -1) {
+              zone = 'z2'
+            } else if (uploadURL.indexOf('up-z1') !== -1) {
+              zone = 'z1'
+            } else {
+              zone = 'z0'
+            }
+            commit(M.SET_ZONE, { bucket, zone })
+            resolve(res)
+          }).catch(err => {
+            reject(err)
+          })
+        }
+      } else {
+        reject(new Error('缺失秘钥'))
+      }
+    })
   }
 }
