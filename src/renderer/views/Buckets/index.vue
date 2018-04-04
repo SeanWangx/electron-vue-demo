@@ -19,13 +19,7 @@
         @close="addBktVisible = false"
         @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
-    <el-main style="background: #ccc;font-size: 0;">
-      <el-select size="small" v-model="domain" style="width: 250px;">
-        <el-option v-for="(item, index) in domains" :key="index"
-          :label="item" :value="item">{{ item }}</el-option>
-      </el-select>
-      <el-button class="btn-copy" size="small" :data-clipboard-text="domain">复制</el-button>
-    </el-main>
+    <v-content></v-content>
   </el-container>
 </template>
 
@@ -33,6 +27,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Clipboard from 'clipboard'
 import VAddBucket from './AddBucket'
+import VContent from './Content'
 
 export default {
   data () {
@@ -41,6 +36,7 @@ export default {
       marker: '',
       items: [],
       domain: '',
+      prefix: '',
 
       addBktVisible: false
     }
@@ -119,7 +115,8 @@ export default {
     }
   },
   components: {
-    VAddBucket
+    VAddBucket,
+    VContent
   }
 }
 </script>
