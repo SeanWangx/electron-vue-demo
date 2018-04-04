@@ -131,8 +131,8 @@ export default {
         } = payload
         let Marker = marker ? `&marker=${marker}` : ''
         let Limit = limit ? `&limit=${limit}` : ''
-        let Prefix = prefix ? `&prefix=${prefix}` : ''
-        let Delimiter = delimiter ? `&prefix=${delimiter}` : ''
+        let Prefix = prefix ? `&prefix=${encodeURI(prefix)}` : ''
+        let Delimiter = delimiter ? `&delimiter=${encodeURI(delimiter)}` : ''
         if (!!bucket === false) {
           reject(new Error('缺失存储空间名'))
         } else {
