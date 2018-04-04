@@ -19,18 +19,19 @@
         @close="addBktVisible = false"
         @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
-    <el-main style="background: #ccc;">
-      <el-select size="small" v-model="domain" style="width: 300px;">
+    <el-main style="background: #ccc;font-size: 0;">
+      <el-select size="small" v-model="domain" style="width: 250px;">
         <el-option v-for="(item, index) in domains" :key="index"
           :label="item" :value="item">{{ item }}</el-option>
       </el-select>
-      <el-button size="small" @click="handleCopyDomain">复制</el-button>
+      <el-button class="btn-copy" size="small" :data-clipboard-text="domain">复制</el-button>
     </el-main>
   </el-container>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import Clipboard from 'clipboard'
 import VAddBucket from './AddBucket'
 
 export default {
@@ -49,6 +50,13 @@ export default {
       buckets: 'buckets'
     })
   },
+  mounted () {
+    this.clipboard = new Clipboard('.btn-copy')
+    this.clipboard.on('success', e => {
+      this.$message.success(`复制空间域名成功: ${this.domain} !`)
+      e.clearSelection()
+    })
+  },
   methods: {
     ...mapActions({
       fetchBuckets: 'FETCH_BUCKETS',
@@ -65,7 +73,7 @@ export default {
       try {
         const domains = await this.fetchBucketDomain({ bucket })
         this.domains = [...domains]
-        this.domain = this.domains[0]
+        this.domain = this.domains[0] || ''
         const resObj = await this.fetchList({ bucket })
         const { marker = '', items = [] } = resObj
         this.marker = marker
