@@ -81,9 +81,6 @@ export default {
         console.warn(e)
       }
     },
-    handleCopyDomain () {
-      // TODO
-    },
     handleAddSuccess (form = {}) {
       const { bucket, region } = form
       if (!!bucket && !!region) {
