@@ -23,6 +23,7 @@
       <div style="margin-bottom: 10px;position: relative;">
         <el-button size="small">上传<i class="el-icon-upload el-icon--right"></i></el-button>
         <el-button size="small">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
+        <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resource.length }} 个文件</span>
         <el-input clearable size="small"
           v-model="prefix"
           prefix-icon="el-icon-search"
@@ -39,6 +40,7 @@
         <!-- <el-button class="btn-copy" size="small" :data-clipboard-text="domainDefault">保存默认域名</el-button> -->
         <el-button class="btn-copy" size="small" @click="() => {}">保存默认域名</el-button>
       </div>
+      <div style="width: 100%;height: calc(100% - 84px);"></div>
     </el-main>
     <el-main v-else class="flex-container">
       <div style="flex: 1;text-align: center;">请选择或者<el-button style="margin: 0 4px;" type="primary" size="mini" @click="handleAddBucket">新建</el-button>存储空间</div>
@@ -57,7 +59,7 @@ export default {
       bucketSelected: '',
       domainOptions: [],
       // marker: '',
-      items: [],
+      resource: [],
       domainDefault: '',
       prefix: '',
 
@@ -70,6 +72,7 @@ export default {
     })
   },
   beforeMount () {
+    this.fetchBuckets({})
     /* this.clipboard = new Clipboard('.btn-copy')
     this.clipboard.on('success', e => {
       this.$message.success(`复制空间域名成功: ${this.domainDefault} !`)
@@ -90,22 +93,27 @@ export default {
       this.domainOptions = []
       this.domainDefault = ''
       // this.marker = ''
-      this.items = []
+      this.resource = []
       try {
         // 查询存储空间区域
         !!bucket['zone'] || await this.fetchBucketZone({ bucket: bucket['name'] })
 
         // 查询存储空间域名
-        const domainOptions = await this.fetchBucketDomain({ bucket: bucket['name'] })
-        this.domainOptions = [...domainOptions]
-        this.domainDefault = this.domainOptions[0] || ''
+        if (!!bucket['domains'] && bucket['domains'].length > 0) {
+          this.domainOptions = bucket['domains']
+          this.domainDefault = this.domainOptions[0] || ''
+        } else {
+          const domainOptions = await this.fetchBucketDomain({ bucket: bucket['name'] })
+          this.domainOptions = [...domainOptions]
+          this.domainDefault = this.domainOptions[0] || ''
+        }
 
         // 查询存储空间数据记录
         const resObj = await this.fetchList({ bucket: bucket['name'] })
         // const { marker = '', items = [] } = resObj
         const { items = [] } = resObj
         // this.marker = marker
-        this.items = items
+        this.resource = items
       } catch (e) {
         console.warn(e)
       }

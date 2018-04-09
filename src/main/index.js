@@ -39,12 +39,10 @@ function createWindow () {
     const { data, uuid } = payload
     const { valid = false } = data
     if (valid) {
-      mainWindow.setResizable(true)
       mainWindow.setMinimumSize(1024, 768)
       mainWindow.setSize(1024, 768)
       mainWindow.center()
     } else {
-      mainWindow.setResizable(false)
       mainWindow.setMinimumSize(540, 600)
       mainWindow.setSize(540, 600)
       mainWindow.center()

@@ -56,7 +56,8 @@ export default {
         commit(M.SET_BUCKETS, res.map(item => {
           return {
             name: item,
-            zone: null
+            zone: '',
+            domains: []
           }
         }))
         resolve()
@@ -173,6 +174,7 @@ export default {
               'Authorization': `QBox ${accessToken}`
             }
           }).then(res => {
+            commit(M.SET_DOMAINS, { bucket, domains: res })
             resolve(res)
           }).catch(err => {
             reject(err)
@@ -203,7 +205,7 @@ export default {
             }
           }).then(res => {
             let uploadURL = res['up']['src']['main'][0]
-            let zone = null
+            let zone = ''
             if (uploadURL.indexOf('up-as0') !== -1) {
               zone = 'as0'
             } else if (uploadURL.indexOf('up-na0') !== -1) {

@@ -27,5 +27,15 @@ export default {
       }
     })
     storage.set('buckets', state.buckets)
+  },
+  [M.SET_DOMAINS] (state, payload = {}) {
+    const { bucket, domains } = payload
+    state.buckets = state.buckets.map(item => {
+      return {
+        ...item,
+        domains: item['name'] === bucket ? domains : item['domains']
+      }
+    })
+    storage.set('buckets', state.buckets)
   }
 }
