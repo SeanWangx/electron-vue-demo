@@ -33,8 +33,7 @@
           v-model="prefix"
           prefix-icon="el-icon-search"
           style="width: 200px;position: absolute;right: 0;"
-          placeholder="请输入文件前缀搜索"
-          @change="() => {}"></el-input>
+          placeholder="请输入文件前缀搜索"></el-input>
       </div>
       <div style="margin-bottom: 10px;position: relative;">
         <span style="font-size: 14px;">外链默认域名</span>
@@ -47,7 +46,7 @@
       </div>
       <div class="table-container">
         <el-table
-          max-height="622px"
+          max-height="622"
           style="100%;"
           :header-cell-style="{'background': '#f5f7fa'}"
           :data="resource">
@@ -85,7 +84,14 @@
             label="操作">
             <template slot-scope="scope">
               <el-button @click="() => {}" type="text" size="small" icon="el-icon-view"></el-button>
-              <el-button @click="() => {}" type="text" size="small" icon="el-icon-more"></el-button>
+              <el-dropdown trigger="click">
+                <el-button type="text" size="small" icon="el-icon-more"></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>下载文件</el-dropdown-item>
+                  <el-dropdown-item>复制外链</el-dropdown-item>
+                  <el-dropdown-item>删除文件</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -121,7 +127,13 @@ export default {
     })
   },
   beforeMount () {
-    this.fetchBuckets({})
+    this.fetchBuckets({}).then(() => {
+      this.$nextTick(() => {
+        if (this.buckets[0]) {
+          document.querySelectorAll('.bucket-item')[0].click()
+        }
+      })
+    })
     /* this.clipboard = new Clipboard('.btn-copy')
     this.clipboard.on('success', e => {
       this.$message.success(`复制空间域名成功: ${this.domainDefault} !`)
