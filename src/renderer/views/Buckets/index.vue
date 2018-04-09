@@ -46,7 +46,7 @@ export default {
       buckets: 'buckets'
     })
   },
-  mounted () {
+  beforeMount () {
     this.clipboard = new Clipboard('.btn-copy')
     this.clipboard.on('success', e => {
       this.$message.success(`复制空间域名成功: ${this.domain} !`)
@@ -68,13 +68,17 @@ export default {
       this.marker = ''
       this.items = []
       try {
-        !!bucket['name'] || await this.fetchBucketZone({ bucket: bucket['name'] })
+        // 查询存储空间区域
+        !!bucket['zone'] || await this.fetchBucketZone({ bucket: bucket['name'] })
 
+        // 查询存储空间域名
         const domains = await this.fetchBucketDomain({ bucket: bucket['name'] })
-        const resObj = await this.fetchList({ bucket: bucket['name'] })
-        const { marker = '', items = [] } = resObj
         this.domains = [...domains]
         this.domain = this.domains[0] || ''
+
+        // 查询存储空间数据记录
+        const resObj = await this.fetchList({ bucket: bucket['name'] })
+        const { marker = '', items = [] } = resObj
         this.marker = marker
         this.items = items
       } catch (e) {
