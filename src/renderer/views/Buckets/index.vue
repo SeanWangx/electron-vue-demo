@@ -1,8 +1,13 @@
 <template>
   <el-container style="width: 100%;height: 100%;">
-    <el-aside style="width: 200px;">
-      <el-menu style="height: calc(100% - 48px);overflow-y: auto">
-        <el-menu-item class="bucket-item"
+    <el-aside style="width: 180px;">
+      <el-menu
+        background-color="#545c64"
+        text-color="#fff"
+        active-text-color="#ffd04b"
+        style="height: calc(100% - 48px);overflow-y: auto">
+        <el-menu-item
+          class="bucket-item"
           v-for="(item, index) in buckets"
           :key="index"
           :index="index.toString()"
@@ -12,7 +17,7 @@
         </el-menu-item>
       </el-menu>
       <div class="add-bucket">
-        <el-button @click="handleAddBucket" style="font-weight: 200;" type="text" icon="el-icon-circle-plus">新增</el-button>
+        <el-button @click="handleAddBucket" style="font-weight: 200;color: #fff;" type="text" icon="el-icon-circle-plus">新增</el-button>
       </div>
       <v-add-bucket
         :visible.sync="addBktVisible"
@@ -42,8 +47,9 @@
       </div>
       <div class="table-container">
         <el-table
-          max-height="574px"
+          max-height="622px"
           style="100%;"
+          :header-cell-style="{'background': '#f5f7fa'}"
           :data="resource">
           <el-table-column
             prop="key"
@@ -64,6 +70,22 @@
             label="文件大小">
             <template slot-scope="scope">
               <span>{{ parseFloat(scope.row['fsize'] / 1024).toFixed(2) }} KB</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="putTime"
+            label="上传时间">
+            <template slot-scope="scope">
+              <span>{{ parseInt(scope.row['putTime'] / 10000) | dateFormat }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed="right"
+            align="center"
+            label="操作">
+            <template slot-scope="scope">
+              <el-button @click="() => {}" type="text" size="small" icon="el-icon-view"></el-button>
+              <el-button @click="() => {}" type="text" size="small" icon="el-icon-more"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -177,6 +199,22 @@ export default {
       })
     }
   },
+  filters: {
+    dateFormat (val) {
+      if (!!val === false) {
+        return ''
+      } else {
+        let _dt = new Date(val)
+        let year = _dt.getFullYear()
+        let month = _dt.getMonth() + 1
+        let day = _dt.getDate()
+        let hour = _dt.getHours()
+        let min = _dt.getMinutes()
+        let sec = _dt.getSeconds()
+        return `${year}-${month}-${day} ${hour}:${min}:${sec}`
+      }
+    }
+  },
   components: {
     VAddBucket
   }
@@ -206,9 +244,10 @@ export default {
     height: 48px;
     margin: 0;
     padding: 0 20px;
+    border-right: 1px solid #fff;
     line-height: 48px;
     box-sizing: border-box;
-    background: #D3DCE6;
+    background: #4b4f53;
 }
 .table-container {
     display: block;

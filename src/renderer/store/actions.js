@@ -126,7 +126,7 @@ export default {
         const {
           bucket,
           marker = '',
-          limit = '5',
+          limit = '10000', // 不分页了
           prefix = '',
           delimiter = ''
         } = payload
