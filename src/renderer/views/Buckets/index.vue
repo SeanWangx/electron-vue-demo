@@ -40,7 +40,34 @@
         <!-- <el-button class="btn-copy" size="small" :data-clipboard-text="domainDefault">保存默认域名</el-button> -->
         <el-button class="btn-copy" size="small" @click="() => {}">保存默认域名</el-button>
       </div>
-      <div style="width: 100%;height: calc(100% - 84px);"></div>
+      <div class="table-container">
+        <el-table
+          max-height="574px"
+          style="100%;"
+          :data="resource">
+          <el-table-column
+            prop="key"
+            label="文件名"></el-table-column>
+          <el-table-column
+            prop="mimeType"
+            label="文件类型"></el-table-column>
+          <el-table-column
+            prop="type"
+            label="存储类型">
+            <template slot-scope="scope">
+              <span v-if="scope.row['type'] === 0">标准存储</span>
+              <span v-if="scope.row['type'] === 1">低频存储</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="fsize"
+            label="文件大小">
+            <template slot-scope="scope">
+              <span>{{ parseFloat(scope.row['fsize'] / 1024).toFixed(2) }} KB</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-main>
     <el-main v-else class="flex-container">
       <div style="flex: 1;text-align: center;">请选择或者<el-button style="margin: 0 4px;" type="primary" size="mini" @click="handleAddBucket">新建</el-button>存储空间</div>
@@ -182,5 +209,14 @@ export default {
     line-height: 48px;
     box-sizing: border-box;
     background: #D3DCE6;
+}
+.table-container {
+    display: block;
+    width: 100%;
+    height: 574px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    /* background: #ccc; */
 }
 </style>
