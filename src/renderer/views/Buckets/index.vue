@@ -12,30 +12,53 @@
         </el-menu-item>
       </el-menu>
       <div class="add-bucket">
-        <el-button @click="addBktVisible = true" style="font-weight: 200;" type="text" icon="el-icon-circle-plus">新增</el-button>
+        <el-button @click="handleAddBucket" style="font-weight: 200;" type="text" icon="el-icon-circle-plus">新增</el-button>
       </div>
       <v-add-bucket
         :visible.sync="addBktVisible"
         @close="addBktVisible = false"
         @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
-    <v-content></v-content>
+    <el-main v-if="bucketSelected" style="font-size: 0;height: 100%;position: relative;">
+      <div style="margin-bottom: 10px;position: relative;">
+        <el-button size="small">上传<i class="el-icon-upload el-icon--right"></i></el-button>
+        <el-button size="small">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
+        <el-input clearable size="small"
+          v-model="prefix"
+          prefix-icon="el-icon-search"
+          style="width: 200px;position: absolute;right: 0;"
+          placeholder="请输入文件前缀搜索"
+          @change="() => {}"></el-input>
+      </div>
+      <div style="margin-bottom: 10px;position: relative;">
+        <span style="font-size: 14px;">外链默认域名</span>
+        <el-select size="small" v-model="domainDefault" style="width: 230px;vertical-align: top;margin: 0 10px;">
+          <el-option v-for="(item, index) in domainOptions" :key="index"
+            :label="item" :value="item">{{ item }}</el-option>
+        </el-select>
+        <!-- <el-button class="btn-copy" size="small" :data-clipboard-text="domainDefault">保存默认域名</el-button> -->
+        <el-button class="btn-copy" size="small" @click="() => {}">保存默认域名</el-button>
+      </div>
+    </el-main>
+    <el-main v-else class="flex-container">
+      <div style="flex: 1;text-align: center;">请选择或者<el-button style="margin: 0 4px;" type="primary" size="mini" @click="handleAddBucket">新建</el-button>存储空间</div>
+    </el-main>
   </el-container>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import Clipboard from 'clipboard'
+// import Clipboard from 'clipboard'
 import VAddBucket from './AddBucket'
-import VContent from './Content'
 
 export default {
   data () {
     return {
-      domains: [],
-      marker: '',
+      bucketSelected: '',
+      domainOptions: [],
+      // marker: '',
       items: [],
-      domain: '',
+      domainDefault: '',
       prefix: '',
 
       addBktVisible: false
@@ -47,11 +70,11 @@ export default {
     })
   },
   beforeMount () {
-    this.clipboard = new Clipboard('.btn-copy')
+    /* this.clipboard = new Clipboard('.btn-copy')
     this.clipboard.on('success', e => {
-      this.$message.success(`复制空间域名成功: ${this.domain} !`)
+      this.$message.success(`复制空间域名成功: ${this.domainDefault} !`)
       e.clearSelection()
-    })
+    }) */
   },
   methods: {
     ...mapActions({
@@ -63,27 +86,32 @@ export default {
       fetchBucketZone: 'FETCH_BUCKET_ZONE'
     }),
     async handleClickBucket (bucket) {
-      this.domains = []
-      this.domain = ''
-      this.marker = ''
+      this.bucketSelected = bucket
+      this.domainOptions = []
+      this.domainDefault = ''
+      // this.marker = ''
       this.items = []
       try {
         // 查询存储空间区域
         !!bucket['zone'] || await this.fetchBucketZone({ bucket: bucket['name'] })
 
         // 查询存储空间域名
-        const domains = await this.fetchBucketDomain({ bucket: bucket['name'] })
-        this.domains = [...domains]
-        this.domain = this.domains[0] || ''
+        const domainOptions = await this.fetchBucketDomain({ bucket: bucket['name'] })
+        this.domainOptions = [...domainOptions]
+        this.domainDefault = this.domainOptions[0] || ''
 
         // 查询存储空间数据记录
         const resObj = await this.fetchList({ bucket: bucket['name'] })
-        const { marker = '', items = [] } = resObj
-        this.marker = marker
+        // const { marker = '', items = [] } = resObj
+        const { items = [] } = resObj
+        // this.marker = marker
         this.items = items
       } catch (e) {
         console.warn(e)
       }
+    },
+    handleAddBucket () {
+      this.addBktVisible = true
     },
     handleAddSuccess (form = {}) {
       const { bucket, region } = form
@@ -115,8 +143,7 @@ export default {
     }
   },
   components: {
-    VAddBucket,
-    VContent
+    VAddBucket
   }
 }
 </script>
