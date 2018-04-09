@@ -27,7 +27,7 @@
     <el-main v-if="bucketSelected" style="font-size: 0;height: 100%;position: relative;">
       <div style="margin-bottom: 10px;position: relative;">
         <el-button size="small">上传<i class="el-icon-upload el-icon--right"></i></el-button>
-        <el-button size="small">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
+        <el-button size="small" @click="refresh">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
         <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resource.length }} 个文件</span>
         <el-input clearable size="small"
           v-model="prefix"
@@ -174,6 +174,15 @@ export default {
         // const { marker = '', items = [] } = resObj
         const { items = [] } = resObj
         // this.marker = marker
+        this.resource = items
+      } catch (e) {
+        console.warn(e)
+      }
+    },
+    async refresh () {
+      try {
+        const resObj = await this.fetchList({ bucket: this.bucketSelected['name'] })
+        const { items = [] } = resObj
         this.resource = items
       } catch (e) {
         console.warn(e)
