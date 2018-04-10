@@ -2,14 +2,14 @@
   <el-main style="font-size: 0;height: 100%;position: relative;">
     <div style="margin-bottom: 10px;position: relative;">
       <el-button size="small">上传<i class="el-icon-upload el-icon--right"></i></el-button>
-      <el-button size="small" @click="refresh">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
+      <el-button size="small" @click="() => fetchList()">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
       <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resourceListCount }} 个文件</span>
       <el-input clearable size="small"
         v-model="prefix"
         prefix-icon="el-icon-search"
         style="width: 200px;position: absolute;right: 0;"
         placeholder="请输入文件前缀搜索"
-        @change="handlePrefixChange"></el-input>
+        @change="v => fetchList(v)"></el-input>
     </div>
     <div style="margin-bottom: 10px;position: relative;">
       <span style="font-size: 14px;">外链默认域名</span>
@@ -76,6 +76,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { objectEmptyFilter } from '@/utils/tools'
 export default {
   props: {
     bucket: {
@@ -111,9 +112,16 @@ export default {
     }
   },
   methods: {
-    ...mapActions({}),
-    refresh () {},
-    handlePrefixChange () {},
+    ...mapActions({
+      _fetchList: 'FETCH_LIST'
+    }),
+    async fetchList (prefix = '') {
+      try {
+        await this._fetchList(objectEmptyFilter({ bucket: this.bucket, prefix }))
+      } catch (e) {
+        console.warn(e)
+      }
+    },
     handleCommand () {}
   },
   watch: {

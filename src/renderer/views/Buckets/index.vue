@@ -24,79 +24,6 @@
         @close="addBktVisible = false"
         @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
-    <!-- <el-main v-if="bucketSelected" style="font-size: 0;height: 100%;position: relative;">
-      <div style="margin-bottom: 10px;position: relative;">
-        <el-button size="small">上传<i class="el-icon-upload el-icon--right"></i></el-button>
-        <el-button size="small" @click="refresh">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
-        <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resource.length }} 个文件</span>
-        <el-input clearable size="small"
-          v-model="prefix"
-          prefix-icon="el-icon-search"
-          style="width: 200px;position: absolute;right: 0;"
-          placeholder="请输入文件前缀搜索"
-          @change="handlePrefixChange"></el-input>
-      </div>
-      <div style="margin-bottom: 10px;position: relative;">
-        <span style="font-size: 14px;">外链默认域名</span>
-        <el-select size="small" v-model="domainDefault" style="width: 230px;vertical-align: top;margin: 0 10px;">
-          <el-option v-for="(item, index) in domainOptions" :key="index"
-            :label="item" :value="item">{{ item }}</el-option>
-        </el-select>
-        <el-button class="btn-copy" size="small" @click="() => {}">保存默认域名</el-button>
-      </div>
-      <div class="table-container">
-        <el-table
-          max-height="622"
-          style="100%;"
-          :header-cell-style="{'background': '#f5f7fa'}"
-          :data="resource">
-          <el-table-column
-            prop="key"
-            label="文件名"></el-table-column>
-          <el-table-column
-            prop="mimeType"
-            label="文件类型"></el-table-column>
-          <el-table-column
-            prop="type"
-            label="存储类型">
-            <template slot-scope="scope">
-              <span v-if="scope.row['type'] === 0">标准存储</span>
-              <span v-if="scope.row['type'] === 1">低频存储</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="fsize"
-            label="文件大小">
-            <template slot-scope="scope">
-              <span>{{ parseFloat(scope.row['fsize'] / 1024).toFixed(2) }} KB</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="putTime"
-            label="上传时间">
-            <template slot-scope="scope">
-              <span>{{ parseInt(scope.row['putTime'] / 10000) | dateFormat }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            fixed="right"
-            align="center"
-            label="操作">
-            <template slot-scope="scope">
-              <el-button @click="() => {}" type="text" size="small" icon="el-icon-view"></el-button>
-              <el-dropdown trigger="click" @command="handleCommand">
-                <el-button type="text" size="small" icon="el-icon-more"></el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item :command="{type: '1'}">下载文件</el-dropdown-item>
-                  <el-dropdown-item :command="{type: '2'}">复制外链</el-dropdown-item>
-                  <el-dropdown-item :command="{type: '3', key: scope.row['key']}">删除文件</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-    </el-main> -->
     <v-content v-if="bucket"
       :bucket="bucket"
       :domains="domains"
@@ -211,15 +138,6 @@ export default {
       }
     },
 
-    async refresh () {
-      try {
-        const resObj = await this.fetchList({ bucket: this.bucketSelected['name'] })
-        const { items = [] } = resObj
-        this.resource = items
-      } catch (e) {
-        console.warn(e)
-      }
-    },
     deleteResource (key) {
       this.$showConfirm({
         title: '提示',
@@ -244,37 +162,6 @@ export default {
         // 删除文件
         const { key = '' } = command
         this.deleteResource(key)
-      }
-    },
-    async handlePrefixChange (val) {
-      try {
-        // 查询存储空间数据记录
-        const resObj = await this.fetchList({
-          prefix: val,
-          bucket: this.bucketSelected['name']
-        })
-        // const { marker = '', items = [] } = resObj
-        const { items = [] } = resObj
-        // this.marker = marker
-        this.resource = items
-      } catch (e) {
-        console.warn(e)
-      }
-    }
-  },
-  filters: {
-    dateFormat (val) {
-      if (!!val === false) {
-        return ''
-      } else {
-        let _dt = new Date(val)
-        let year = _dt.getFullYear()
-        let month = _dt.getMonth() + 1
-        let day = _dt.getDate()
-        let hour = _dt.getHours()
-        let min = _dt.getMinutes()
-        let sec = _dt.getSeconds()
-        return `${year}-${month}-${day} ${hour}:${min}:${sec}`
       }
     }
   },
