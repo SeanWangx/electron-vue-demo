@@ -5,14 +5,13 @@
         background-color="#545c64"
         text-color="#fff"
         active-text-color="#ffd04b"
-        :default-active="activeIndex"
         style="height: calc(100% - 48px);overflow-y: auto">
         <el-menu-item
           class="bucket-item"
           v-for="(item, index) in buckets"
           :key="index"
           :index="index.toString()"
-          @click="e => $noRepeat(selectBucket, e, item, index)">
+          @click="e => $noRepeat(selectBucket, e, item)">
           <span slot="title">{{ item.name }}</span>
           <el-button @click.stop="() => delBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
         </el-menu-item>
@@ -117,7 +116,6 @@ import VContent from './Content'
 export default {
   data () {
     return {
-      activeIndex: null,
       bucket: '',
       domains: [],
       zone: '',
@@ -161,11 +159,12 @@ export default {
         _index = (_index === null && this.buckets[0]) ? 0 : null
         if (_index !== null) {
           document.querySelectorAll('.bucket-item')[_index].click()
+        } else {
+          this.bucket = ''
         }
       })
     },
-    async selectBucket (bucketObj, index) {
-      this.activeIndex = index.toString()
+    async selectBucket (bucketObj) {
       this.domains = bucketObj['domains'] || []
       this.zone = bucketObj['zone'] || ''
       try {
