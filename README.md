@@ -9,15 +9,15 @@
 * [x] 删除指定资源
 
 ### TODO
-* [ ] 设置存储空间访问权限
+* [ ] 图片资源预览
 * [ ] 修改默认外链域名
 * [ ] 复制资源外链地址
-* [ ] 图片资源预览
 * [ ] 上传资源
 * [ ] 下载资源
 * [ ] 重命名资源
 * [ ] 移动资源
 * [ ] 资源批量操作
+* [ ] 设置存储空间访问权限
 
 #### Build Setup
 
@@ -30,8 +30,4 @@ yarn run dev
 
 # build electron application for production
 yarn run build
-
-# lint all JS/Vue component files in `src/`
-yarn run lint
-
 ```
