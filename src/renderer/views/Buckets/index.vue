@@ -11,13 +11,13 @@
           v-for="(item, index) in buckets"
           :key="index"
           :index="index.toString()"
-          @click="e => $noRepeat(handleClickBucket, e, item)">
+          @click="e => $noRepeat(selectBucket, e, item)">
           <span slot="title">{{ item.name }}</span>
-          <el-button @click.stop="() => handeDelBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
+          <el-button @click.stop="() => delBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
         </el-menu-item>
       </el-menu>
       <div class="add-bucket">
-        <el-button @click="handleAddBucket" style="font-weight: 200;color: #fff;" type="text" icon="el-icon-circle-plus">新增</el-button>
+        <el-button @click="addBucket" style="font-weight: 200;color: #fff;" type="text" icon="el-icon-circle-plus">新增</el-button>
       </div>
       <v-add-bucket
         :visible.sync="addBktVisible"
@@ -98,7 +98,7 @@
       </div>
     </el-main>
     <el-main v-else class="flex-container">
-      <div style="flex: 1;text-align: center;">请选择或者<el-button style="margin: 0 4px;" type="primary" size="mini" @click="handleAddBucket">新建</el-button>存储空间</div>
+      <div style="flex: 1;text-align: center;">请选择或者<el-button style="margin: 0 4px;" type="primary" size="mini" @click="addBucket">新建</el-button>存储空间</div>
     </el-main>
   </el-container>
 </template>
@@ -149,7 +149,7 @@ export default {
       fetchBucketDomain: 'FETCH_BUCKET_DOMAIN',
       fetchBucketZone: 'FETCH_BUCKET_ZONE'
     }),
-    async handleClickBucket (bucket) {
+    async selectBucket (bucket) {
       this.bucketSelected = bucket
       this.domainOptions = []
       this.domainDefault = ''
@@ -188,7 +188,7 @@ export default {
         console.warn(e)
       }
     },
-    handleAddBucket () {
+    addBucket () {
       this.addBktVisible = true
     },
     handleAddSuccess (form = {}) {
@@ -203,7 +203,7 @@ export default {
         })
       }
     },
-    handeDelBucket (bucket) {
+    delBucket (bucket) {
       this.$showConfirm({
         title: '提示',
         content: `是否确认删除: ${bucket} ?`
