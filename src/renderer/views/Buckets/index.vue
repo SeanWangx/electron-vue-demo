@@ -84,12 +84,12 @@
             label="操作">
             <template slot-scope="scope">
               <el-button @click="() => {}" type="text" size="small" icon="el-icon-view"></el-button>
-              <el-dropdown trigger="click">
+              <el-dropdown trigger="click" @command="handleCommand">
                 <el-button type="text" size="small" icon="el-icon-more"></el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>下载文件</el-dropdown-item>
-                  <el-dropdown-item>复制外链</el-dropdown-item>
-                  <el-dropdown-item>删除文件</el-dropdown-item>
+                  <el-dropdown-item :command="{type: '1'}">下载文件</el-dropdown-item>
+                  <el-dropdown-item :command="{type: '2'}">复制外链</el-dropdown-item>
+                  <el-dropdown-item :command="{type: '3', key: scope.row['key']}">删除文件</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -147,7 +147,8 @@ export default {
       deleteBucket: 'DELETE_BUCKET',
       fetchList: 'FETCH_LIST',
       fetchBucketDomain: 'FETCH_BUCKET_DOMAIN',
-      fetchBucketZone: 'FETCH_BUCKET_ZONE'
+      fetchBucketZone: 'FETCH_BUCKET_ZONE',
+      deleteBucketResource: 'DELETE_BUCKET_RESOURCE'
     }),
     async selectBucket (bucket) {
       this.bucketSelected = bucket
@@ -186,6 +187,32 @@ export default {
         this.resource = items
       } catch (e) {
         console.warn(e)
+      }
+    },
+    deleteResource (key) {
+      this.$showConfirm({
+        title: '提示',
+        content: `是否确认删除: ${key} ?`
+      }).then(() => {
+        let payload = { key, bucket: this.bucketSelected['name'] }
+        this.deleteBucketResource(payload).then(res => {
+          this.refresh()
+        }).catch(err => {
+          console.warn(err)
+        })
+      }).catch(() => {
+        console.warn('取消')
+      })
+    },
+    handleCommand (command) {
+      if (command['type'] === '1') {
+        // 下载文件
+      } else if (command['type'] === '2') {
+        // 复制外链
+      } else if (command['type'] === '3') {
+        // 删除文件
+        const { key = '' } = command
+        this.deleteResource(key)
       }
     },
     addBucket () {

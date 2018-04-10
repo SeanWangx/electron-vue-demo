@@ -227,5 +227,36 @@ export default {
         reject(new Error('缺失秘钥'))
       }
     })
+  },
+  /**
+   * 删除指定资源
+   */
+  [A.DELETE_BUCKET_RESOURCE] ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const { accessKey, secretKey } = state
+      if (!!accessKey && !!secretKey) {
+        const { bucket, key } = payload
+        if (!!bucket && !!key) {
+          let entry = `${bucket}:${key}`
+          let encodedEntryURI = urlSafeBase64Encode(Buffer.from(entry).toString('base64'))
+          let uri = `/delete/${encodedEntryURI}`
+          let accessToken = getAccessToken(uri, accessKey, secretKey)
+          axios.post(`http://rs.qiniu.com${uri}`, null, {
+            method: 'post',
+            headers: {
+              'Authorization': `QBox ${accessToken}`
+            }
+          }).then(res => {
+            resolve(res)
+          }).catch(err => {
+            reject(err)
+          })
+        } else {
+          reject(new Error('缺失请求资源名'))
+        }
+      } else {
+        reject(new Error('缺失秘钥'))
+      }
+    })
   }
 }
