@@ -27,6 +27,8 @@ export default {
     commit(M.SET_BUCKETS, [])
     commit(M.SET_ACCCESS_KEY, '')
     commit(M.SET_SECRET_KEY, '')
+    commit(M.SET_RESOURCE_LIST_DATA, [])
+    commit(M.SET_RESOURCE_LIST_COUNT, 0)
     commit(M.SET_USER_VALID, false)
   },
   /**
@@ -145,6 +147,9 @@ export default {
               'Authorization': `QBox ${accessToken}`
             }
           }).then(res => {
+            const { items = [] } = res
+            commit(M.SET_RESOURCE_LIST_DATA, items)
+            commit(M.SET_RESOURCE_LIST_COUNT, items.length)
             resolve(res)
           }).catch(err => {
             reject(err)
@@ -218,7 +223,7 @@ export default {
               zone = 'z0'
             }
             commit(M.SET_ZONE, { bucket, zone })
-            resolve(res)
+            resolve(zone)
           }).catch(err => {
             reject(err)
           })

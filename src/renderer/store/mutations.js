@@ -37,5 +37,11 @@ export default {
       }
     })
     storage.set('buckets', state.buckets)
+  },
+  [M.SET_RESOURCE_LIST_DATA] (state, resourceListData = []) {
+    state.resourceListData = resourceListData
+  },
+  [M.SET_RESOURCE_LIST_COUNT] (state, resourceListCount = 0) {
+    state.resourceListCount = resourceListCount
   }
 }

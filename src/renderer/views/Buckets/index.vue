@@ -5,13 +5,14 @@
         background-color="#545c64"
         text-color="#fff"
         active-text-color="#ffd04b"
+        :default-active="activeIndex"
         style="height: calc(100% - 48px);overflow-y: auto">
         <el-menu-item
           class="bucket-item"
           v-for="(item, index) in buckets"
           :key="index"
           :index="index.toString()"
-          @click="e => $noRepeat(selectBucket, e, item)">
+          @click="e => $noRepeat(selectBucket, e, item, index)">
           <span slot="title">{{ item.name }}</span>
           <el-button @click.stop="() => delBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
         </el-menu-item>
@@ -24,7 +25,7 @@
         @close="addBktVisible = false"
         @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
-    <el-main v-if="bucketSelected" style="font-size: 0;height: 100%;position: relative;">
+    <!-- <el-main v-if="bucketSelected" style="font-size: 0;height: 100%;position: relative;">
       <div style="margin-bottom: 10px;position: relative;">
         <el-button size="small">上传<i class="el-icon-upload el-icon--right"></i></el-button>
         <el-button size="small" @click="refresh">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
@@ -42,7 +43,6 @@
           <el-option v-for="(item, index) in domainOptions" :key="index"
             :label="item" :value="item">{{ item }}</el-option>
         </el-select>
-        <!-- <el-button class="btn-copy" size="small" :data-clipboard-text="domainDefault">保存默认域名</el-button> -->
         <el-button class="btn-copy" size="small" @click="() => {}">保存默认域名</el-button>
       </div>
       <div class="table-container">
@@ -97,7 +97,11 @@
           </el-table-column>
         </el-table>
       </div>
-    </el-main>
+    </el-main> -->
+    <v-content v-if="bucket"
+      :bucket="bucket"
+      :domains="domains"
+      :zone="zone"></v-content>
     <el-main v-else class="flex-container">
       <div style="flex: 1;text-align: center;">请选择或者<el-button style="margin: 0 4px;" type="primary" size="mini" @click="addBucket">新建</el-button>存储空间</div>
     </el-main>
@@ -108,16 +112,15 @@
 import { mapGetters, mapActions } from 'vuex'
 // import Clipboard from 'clipboard'
 import VAddBucket from './AddBucket'
+import VContent from './Content'
 
 export default {
   data () {
     return {
-      bucketSelected: '',
-      domainOptions: [],
-      // marker: '',
-      resource: [],
-      domainDefault: '',
-      prefix: '',
+      activeIndex: null,
+      bucket: '',
+      domains: [],
+      zone: '',
 
       addBktVisible: false
     }
@@ -129,11 +132,7 @@ export default {
   },
   beforeMount () {
     this.fetchBuckets({}).then(() => {
-      this.$nextTick(() => {
-        if (this.buckets[0]) {
-          document.querySelectorAll('.bucket-item')[0].click()
-        }
-      })
+      this.defaultClick('')
     })
     /* this.clipboard = new Clipboard('.btn-copy')
     this.clipboard.on('success', e => {
@@ -151,36 +150,68 @@ export default {
       fetchBucketZone: 'FETCH_BUCKET_ZONE',
       deleteBucketResource: 'DELETE_BUCKET_RESOURCE'
     }),
-    async selectBucket (bucket) {
-      this.bucketSelected = bucket
-      this.domainOptions = []
-      this.domainDefault = ''
-      // this.marker = ''
-      this.resource = []
+    defaultClick (bucket) {
+      this.$nextTick(() => {
+        let _index = this.buckets.reduce((acc, cur, index) => {
+          if (acc === null) {
+            acc = cur['name'] === bucket ? index : acc
+          }
+          return acc
+        }, null)
+        _index = (_index === null && this.buckets[0]) ? 0 : null
+        if (_index !== null) {
+          document.querySelectorAll('.bucket-item')[_index].click()
+        }
+      })
+    },
+    async selectBucket (bucketObj, index) {
+      this.activeIndex = index.toString()
+      this.domains = bucketObj['domains'] || []
+      this.zone = bucketObj['zone'] || ''
       try {
         // 查询存储空间区域
-        !!bucket['zone'] || await this.fetchBucketZone({ bucket: bucket['name'] })
-
-        // 查询存储空间域名
-        if (!!bucket['domains'] && bucket['domains'].length > 0) {
-          this.domainOptions = bucket['domains']
-          this.domainDefault = this.domainOptions[0] || ''
-        } else {
-          const domainOptions = await this.fetchBucketDomain({ bucket: bucket['name'] })
-          this.domainOptions = [...domainOptions]
-          this.domainDefault = this.domainOptions[0] || ''
+        if (!!this.zone === false) {
+          this.zone = await this.fetchBucketZone({ bucket: bucketObj['name'] })
         }
-
+        // 查询存储空间域名
+        if (!!this.domains || this.domains.length === 0) {
+          this.domains = await this.fetchBucketDomain({ bucket: bucketObj['name'] })
+        }
         // 查询存储空间数据记录
-        const resObj = await this.fetchList({ bucket: bucket['name'] })
-        // const { marker = '', items = [] } = resObj
-        const { items = [] } = resObj
-        // this.marker = marker
-        this.resource = items
+        await this.fetchList({ bucket: bucketObj['name'] })
+      } catch (e) {
+        console.warn(e)
+      } finally {
+        this.bucket = bucketObj['name']
+      }
+    },
+    addBucket () {
+      this.addBktVisible = true
+    },
+    async handleAddSuccess (form = {}) {
+      try {
+        const { bucket, region } = form
+        await this.createBucket({ bucket, region })
+        await this.fetchBuckets({})
+        this.defaultClick(this.bucket)
       } catch (e) {
         console.warn(e)
       }
     },
+    async delBucket (bucket) {
+      try {
+        await this.$showConfirm({
+          title: '提示',
+          content: `是否确认删除: ${bucket} ?`
+        })
+        await this.deleteBucket({ bucket })
+        await this.fetchBuckets({})
+        this.defaultClick(this.bucket)
+      } catch (e) {
+        console.warn(e)
+      }
+    },
+
     async refresh () {
       try {
         const resObj = await this.fetchList({ bucket: this.bucketSelected['name'] })
@@ -216,37 +247,6 @@ export default {
         this.deleteResource(key)
       }
     },
-    addBucket () {
-      this.addBktVisible = true
-    },
-    handleAddSuccess (form = {}) {
-      const { bucket, region } = form
-      if (!!bucket && !!region) {
-        this.createBucket({ bucket, region }).then(res => {
-          return this.fetchBuckets({})
-        }).then(() => {
-          console.log('fetch bucket list successfully')
-        }).catch(err => {
-          console.error(err)
-        })
-      }
-    },
-    delBucket (bucket) {
-      this.$showConfirm({
-        title: '提示',
-        content: `是否确认删除: ${bucket} ?`
-      }).then(() => {
-        this.deleteBucket({ bucket }).then(res => {
-          return this.fetchBuckets({})
-        }).then(() => {
-          console.log('fetch bucket list successfully')
-        }).catch(err => {
-          console.error(err)
-        })
-      }).catch(() => {
-        console.warn('取消')
-      })
-    },
     async handlePrefixChange (val) {
       try {
         // 查询存储空间数据记录
@@ -280,6 +280,7 @@ export default {
     }
   },
   components: {
+    VContent,
     VAddBucket
   }
 }
