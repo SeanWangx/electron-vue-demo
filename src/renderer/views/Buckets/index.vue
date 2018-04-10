@@ -33,7 +33,8 @@
           v-model="prefix"
           prefix-icon="el-icon-search"
           style="width: 200px;position: absolute;right: 0;"
-          placeholder="请输入文件前缀搜索"></el-input>
+          placeholder="请输入文件前缀搜索"
+          @change="handlePrefixChange"></el-input>
       </div>
       <div style="margin-bottom: 10px;position: relative;">
         <span style="font-size: 14px;">外链默认域名</span>
@@ -245,6 +246,21 @@ export default {
       }).catch(() => {
         console.warn('取消')
       })
+    },
+    async handlePrefixChange (val) {
+      try {
+        // 查询存储空间数据记录
+        const resObj = await this.fetchList({
+          prefix: val,
+          bucket: this.bucketSelected['name']
+        })
+        // const { marker = '', items = [] } = resObj
+        const { items = [] } = resObj
+        // this.marker = marker
+        this.resource = items
+      } catch (e) {
+        console.warn(e)
+      }
     }
   },
   filters: {
