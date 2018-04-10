@@ -11,7 +11,7 @@ const showConfirm = (props = {}) => {
   document.querySelector('body').appendChild($vm.$el)
   return new Promise((resolve, reject) => {
     $vm.$on('confirm', () => resolve())
-    $vm.$on('cancel', () => reject())
+    $vm.$on('cancel', () => reject('取消'))
   })
 }
 export default showConfirm

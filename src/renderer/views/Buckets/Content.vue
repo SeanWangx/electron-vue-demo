@@ -113,7 +113,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      _fetchList: 'FETCH_LIST'
+      _fetchList: 'FETCH_LIST',
+      _deleteBucketResource: 'DELETE_BUCKET_RESOURCE'
     }),
     async fetchList (prefix = '') {
       try {
@@ -122,7 +123,34 @@ export default {
         console.warn(e)
       }
     },
-    handleCommand () {}
+    async deleteBucketResource (key) {
+      try {
+        await this.$showConfirm({
+          title: '提示',
+          content: `是否确认删除: ${key} ?`
+        })
+        await this._deleteBucketResource({
+          key,
+          bucket: this.bucket
+        })
+        await this.fetchList()
+      } catch (e) {
+        console.warn(e)
+      }
+    },
+    handleCommand (command) {
+      if (command['type'] === 'download') {
+        // 下载文件
+        console.log('download')
+      } else if (command['type'] === 'copy') {
+        // 复制外链
+        console.log('copy')
+      } else if (command['type'] === 'delete') {
+        // 删除文件
+        const { key = '' } = command
+        this.deleteBucketResource(key)
+      }
+    }
   },
   watch: {
     bucket (newVal) {

@@ -72,8 +72,7 @@ export default {
       deleteBucket: 'DELETE_BUCKET',
       fetchList: 'FETCH_LIST',
       fetchBucketDomain: 'FETCH_BUCKET_DOMAIN',
-      fetchBucketZone: 'FETCH_BUCKET_ZONE',
-      deleteBucketResource: 'DELETE_BUCKET_RESOURCE'
+      fetchBucketZone: 'FETCH_BUCKET_ZONE'
     }),
     defaultClick (bucket) {
       this.$nextTick(() => {
@@ -135,33 +134,6 @@ export default {
         this.defaultClick(this.bucket)
       } catch (e) {
         console.warn(e)
-      }
-    },
-
-    deleteResource (key) {
-      this.$showConfirm({
-        title: '提示',
-        content: `是否确认删除: ${key} ?`
-      }).then(() => {
-        let payload = { key, bucket: this.bucketSelected['name'] }
-        this.deleteBucketResource(payload).then(res => {
-          this.refresh()
-        }).catch(err => {
-          console.warn(err)
-        })
-      }).catch(() => {
-        console.warn('取消')
-      })
-    },
-    handleCommand (command) {
-      if (command['type'] === '1') {
-        // 下载文件
-      } else if (command['type'] === '2') {
-        // 复制外链
-      } else if (command['type'] === '3') {
-        // 删除文件
-        const { key = '' } = command
-        this.deleteResource(key)
       }
     }
   },
