@@ -48,7 +48,7 @@
         </el-table-column>
         <el-table-column
           prop="putTime"
-          label="上传时间">
+          label="最近更新时间">
           <template slot-scope="scope">
             <span>{{ parseInt(scope.row['putTime'] / 10000) | dateFormat }}</span>
           </template>
