@@ -119,7 +119,7 @@ export const objectEmptyFilter = obj => {
  * @param {*} v 字符串
  */
 export const urlSafeBase64Encode = v => {
-  return v.toString().replace(/\//g, '_').replace(/\+/g, '-')
+  return Buffer.from(v).toString('base64').replace(/\//g, '_').replace(/\+/g, '-')
 }
 
 /**
@@ -130,10 +130,28 @@ export const urlSafeBase64Encode = v => {
  */
 export const getAccessToken = (url, accessKey, secretKey) => {
   let signingStr = url + '\n'
-  let sign = Crypto.createHmac('sha1', secretKey).update(signingStr).digest('base64')
+  let sign = Crypto.createHmac('sha1', secretKey).update(signingStr).digest()
   let encodedSign = urlSafeBase64Encode(sign)
   let accessToken = `${accessKey}:${encodedSign}`
   return accessToken
+}
+
+/**
+ * 获取上传策略
+ * @param {*} bucket 存储空间名
+ * @param {*} key 资源名
+ */
+const getPutPolicy = (bucket, key) => {
+  return JSON.stringify({
+    scope: `${bucket}:${key}`,
+    deadline: new Date().getTime() + 3600
+  })
+}
+
+export const getUploadToken = (bucket, key, accessKey, secretKey) => {
+  let putPolicy = getPutPolicy(bucket, key)
+  let encodedPutPolicy = urlSafeBase64Encode(putPolicy)
+  console.log(encodedPutPolicy)
 }
 
 /**

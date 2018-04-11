@@ -77,7 +77,7 @@ export default {
       const { accessKey, secretKey } = state
       if (!!accessKey && !!secretKey) {
         const { bucket, region } = payload
-        let encodedBucketName = urlSafeBase64Encode(Buffer.from(bucket).toString('base64'))
+        let encodedBucketName = urlSafeBase64Encode(bucket)
         let accessToken = getAccessToken(`/mkbucketv2/${encodedBucketName}/region/${region}`, accessKey, secretKey)
         axios.post(`http://rs.qiniu.com/mkbucketv2/${encodedBucketName}/region/${region}`, null, {
           method: 'post',
@@ -243,7 +243,7 @@ export default {
         const { bucket, key } = payload
         if (!!bucket && !!key) {
           let entry = `${bucket}:${key}`
-          let encodedEntryURI = urlSafeBase64Encode(Buffer.from(entry).toString('base64'))
+          let encodedEntryURI = urlSafeBase64Encode(entry)
           let uri = `/delete/${encodedEntryURI}`
           let accessToken = getAccessToken(uri, accessKey, secretKey)
           axios.post(`http://rs.qiniu.com${uri}`, null, {
@@ -275,8 +275,8 @@ export default {
         if (!!bucketSrc && !!bucketDest && !!keySrc && !!keyDest) {
           let entrySrc = `${bucketSrc}:${keySrc}`
           let entryDest = `${bucketDest}:${keyDest}`
-          let encodedEntryURISrc = urlSafeBase64Encode(Buffer.from(entrySrc).toString('base64'))
-          let encodedEntryURIDest = urlSafeBase64Encode(Buffer.from(entryDest).toString('base64'))
+          let encodedEntryURISrc = urlSafeBase64Encode(entrySrc)
+          let encodedEntryURIDest = urlSafeBase64Encode(entryDest)
           let uri = `/move/${encodedEntryURISrc}/${encodedEntryURIDest}`
           let accessToken = getAccessToken(uri, accessKey, secretKey)
           axios.post(`http://rs.qiniu.com${uri}`, null, {
