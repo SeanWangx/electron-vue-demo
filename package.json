@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "author": "SeanWangx <1971822513@qq.com>",
   "description": "An electron-vue project",
-  "license": null,
+  "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
@@ -54,7 +54,6 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
-    "clipboard": "^2.0.0",
     "element-ui": "2.2.2",
     "uuid": "^3.2.1",
     "vue": "2.5.16",

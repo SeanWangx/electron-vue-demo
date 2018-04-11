@@ -76,7 +76,6 @@
 </template>
 
 <script>
-// import Clipboard from 'clipboard'
 import { mapActions, mapGetters } from 'vuex'
 import { objectEmptyFilter } from '@/utils/tools'
 import { clipboard } from 'electron'
@@ -117,11 +116,6 @@ export default {
       if (!!this.bucket === true) {
         this.domain = this.domains[0] || ''
       }
-      /* this.clipboard = new Clipboard('.copy-url')
-      this.clipboard.on('success', e => {
-        this.$message.success(`复制外链地址成功！`)
-        e.clearSelection()
-      }) */
     })
   },
   methods: {
