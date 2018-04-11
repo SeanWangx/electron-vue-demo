@@ -64,6 +64,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="{type: 'download'}">下载文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'copy'}">复制外链</el-dropdown-item>
+                <el-dropdown-item :command="{type: 'rename', key: scope.row['key']}">重命名</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'delete', key: scope.row['key']}">删除文件</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -114,7 +115,8 @@ export default {
   methods: {
     ...mapActions({
       _fetchList: 'FETCH_LIST',
-      _deleteBucketResource: 'DELETE_BUCKET_RESOURCE'
+      _deleteBucketResource: 'DELETE_BUCKET_RESOURCE',
+      _moveBucketResource: 'MOVE_BUCKET_RESOURCE'
     }),
     async fetchList (prefix = '') {
       try {
@@ -139,6 +141,15 @@ export default {
         console.warn(e)
       }
     },
+    async moveBucketResource (payload) {
+      try {
+        const { bucketSrc, bucketDest, keySrc, keyDest } = payload
+        await this._moveBucketResource({ bucketSrc, bucketDest, keySrc, keyDest })
+        await this.fetchList()
+      } catch (e) {
+        console.warn(e)
+      }
+    },
     handleCommand (command) {
       if (command['type'] === 'download') {
         // 下载文件
@@ -150,6 +161,10 @@ export default {
         // 删除文件
         const { key = '' } = command
         this.deleteBucketResource(key)
+      } else if (command['type'] === 'rename') {
+        // 文件重命名
+        const { key = '' } = command
+        console.log(key)
       }
     }
   },

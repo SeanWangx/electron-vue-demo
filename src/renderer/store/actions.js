@@ -263,5 +263,39 @@ export default {
         reject(new Error('缺失秘钥'))
       }
     })
+  },
+  /**
+   * 资源移动/重命名
+   */
+  [A.MOVE_BUCKET_RESOURCE] ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const { accessKey, secretKey } = state
+      if (!!accessKey && !!secretKey) {
+        const { bucketSrc, keySrc, bucketDest, keyDest } = payload
+        if (!!bucketSrc && !!bucketDest && !!keySrc && !!keyDest) {
+          let entrySrc = `${bucketSrc}:${keySrc}`
+          let entryDest = `${bucketDest}:${keyDest}`
+          let encodedEntryURISrc = urlSafeBase64Encode(Buffer.from(entrySrc).toString('base64'))
+          let encodedEntryURIDest = urlSafeBase64Encode(Buffer.from(entryDest).toString('base64'))
+          let uri = `/move/${encodedEntryURISrc}/${encodedEntryURIDest}`
+          let accessToken = getAccessToken(uri, accessKey, secretKey)
+          axios.post(`http://rs.qiniu.com${uri}`, null, {
+            method: 'post',
+            headers: {
+              'Authorization': `QBox ${accessToken}`
+            }
+          }).then(res => {
+            console.log(res)
+            resolve(res)
+          }).catch(err => {
+            reject(err)
+          })
+        } else {
+          reject(new Error('缺失请求参数'))
+        }
+      } else {
+        reject(new Error('缺失秘钥'))
+      }
+    })
   }
 }
