@@ -78,6 +78,8 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { objectEmptyFilter } from '@/utils/tools'
+const { dialog } = require('electron').remote
+
 export default {
   props: {
     bucket: {
@@ -88,7 +90,8 @@ export default {
   data () {
     return {
       prefix: '',
-      domain: ''
+      domain: '',
+      downloadPath: ''
     }
   },
   computed: {
@@ -150,10 +153,20 @@ export default {
         console.warn(e)
       }
     },
+    downloadFile () {
+      let pathArr = dialog.showOpenDialog({
+        // properties: ['openDirectory', 'createDirectory'] // macOS
+        properties: ['openDirectory'] // macOS
+      })
+      if (!!pathArr && pathArr[0]) {
+        this.downloadPath = pathArr[0]
+        console.log(`download path: ${pathArr[0]}`)
+      }
+    },
     handleCommand (command) {
       if (command['type'] === 'download') {
         // 下载文件
-        console.log('download')
+        this.downloadFile()
       } else if (command['type'] === 'copy') {
         // 复制外链
         console.log('copy')
