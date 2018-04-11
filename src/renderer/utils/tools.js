@@ -151,7 +151,10 @@ const getPutPolicy = (bucket, key) => {
 export const getUploadToken = (bucket, key, accessKey, secretKey) => {
   let putPolicy = getPutPolicy(bucket, key)
   let encodedPutPolicy = urlSafeBase64Encode(putPolicy)
-  console.log(encodedPutPolicy)
+  let sign = Crypto.createHmac('sha1', secretKey).update(encodedPutPolicy).digest()
+  let encodedSign = urlSafeBase64Encode(sign)
+  let uploadToken = `${accessKey}:${encodedSign}:${encodedPutPolicy}`
+  return uploadToken
 }
 
 /**
