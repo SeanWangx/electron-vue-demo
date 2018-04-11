@@ -36,7 +36,6 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-// import Clipboard from 'clipboard'
 import VAddBucket from './AddBucket'
 import VContent from './Content'
 
@@ -57,11 +56,6 @@ export default {
   },
   beforeMount () {
     this.fetchBuckets()
-    /* this.clipboard = new Clipboard('.btn-copy')
-    this.clipboard.on('success', e => {
-      this.$message.success(`复制空间域名成功: ${this.domainDefault} !`)
-      e.clearSelection()
-    }) */
   },
   methods: {
     ...mapActions({

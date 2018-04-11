@@ -63,7 +63,7 @@
               <el-button type="text" size="small" icon="el-icon-more"></el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="{type: 'download'}">下载文件</el-dropdown-item>
-                <el-dropdown-item :command="{type: 'copy'}">复制外链</el-dropdown-item>
+                <el-dropdown-item :command="{type: 'copy', key: scope.row['key']}">复制外链</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'rename', key: scope.row['key']}">重命名</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'delete', key: scope.row['key']}">删除文件</el-dropdown-item>
               </el-dropdown-menu>
@@ -76,8 +76,10 @@
 </template>
 
 <script>
+// import Clipboard from 'clipboard'
 import { mapActions, mapGetters } from 'vuex'
 import { objectEmptyFilter } from '@/utils/tools'
+import { clipboard } from 'electron'
 const { dialog } = require('electron').remote
 
 export default {
@@ -111,9 +113,16 @@ export default {
     }
   },
   mounted () {
-    if (!!this.bucket === true) {
-      this.domain = this.domains[0] || ''
-    }
+    this.$nextTick(() => {
+      if (!!this.bucket === true) {
+        this.domain = this.domains[0] || ''
+      }
+      /* this.clipboard = new Clipboard('.copy-url')
+      this.clipboard.on('success', e => {
+        this.$message.success(`复制外链地址成功！`)
+        e.clearSelection()
+      }) */
+    })
   },
   methods: {
     ...mapActions({
@@ -155,13 +164,16 @@ export default {
     },
     downloadFile () {
       let pathArr = dialog.showOpenDialog({
-        // properties: ['openDirectory', 'createDirectory'] // macOS
-        properties: ['openDirectory'] // macOS
+        properties: ['openDirectory', 'createDirectory']
       })
       if (!!pathArr && pathArr[0]) {
         this.downloadPath = pathArr[0]
         console.log(`download path: ${pathArr[0]}`)
       }
+    },
+    copyLink (key) {
+      clipboard.writeText(`http://${this.domain}/${key}`)
+      this.$message.success('复制外链成功！')
     },
     handleCommand (command) {
       if (command['type'] === 'download') {
@@ -169,11 +181,10 @@ export default {
         this.downloadFile()
       } else if (command['type'] === 'copy') {
         // 复制外链
-        console.log('copy')
+        this.copyLink(command['key'])
       } else if (command['type'] === 'delete') {
         // 删除文件
-        const { key = '' } = command
-        this.deleteBucketResource(key)
+        this.deleteBucketResource(command['key'])
       } else if (command['type'] === 'rename') {
         // 文件重命名
         const { key = '' } = command
