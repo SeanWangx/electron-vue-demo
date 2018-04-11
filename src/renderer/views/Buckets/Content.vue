@@ -64,7 +64,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="{type: 'download'}">下载文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'copy', key: scope.row['key']}">复制外链</el-dropdown-item>
-                <el-dropdown-item :command="{type: 'rename', key: scope.row['key']}">重命名</el-dropdown-item>
+                <el-dropdown-item :command="{type: 'rename', key: scope.row['key']}">文件重命名</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'delete', key: scope.row['key']}">删除文件</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -72,6 +72,11 @@
         </el-table-column>
       </el-table>
     </div>
+    <v-move-resource
+      :visible="moveResourceVisible"
+      :config="moveResourceConfig"
+      @close="moveResourceVisible = false"
+      @success="moveBucketResource"></v-move-resource>
   </el-main>
 </template>
 
@@ -79,6 +84,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { objectEmptyFilter } from '@/utils/tools'
 import { clipboard } from 'electron'
+import VMoveResource from './MoveResource'
 const { dialog } = require('electron').remote
 
 export default {
@@ -92,7 +98,9 @@ export default {
     return {
       prefix: '',
       domain: '',
-      downloadPath: ''
+      downloadPath: '',
+      moveResourceVisible: false,
+      moveResourceConfig: {}
     }
   },
   computed: {
@@ -152,6 +160,7 @@ export default {
         const { bucketSrc, bucketDest, keySrc, keyDest } = payload
         await this._moveBucketResource({ bucketSrc, bucketDest, keySrc, keyDest })
         await this.fetchList()
+        this.$message.success('资源移动/重命名成功！')
       } catch (e) {
         console.warn(e)
       }
@@ -169,6 +178,16 @@ export default {
       clipboard.writeText(`http://${this.domain}/${key}`)
       this.$message.success('复制外链成功！')
     },
+    openMoveDialog (key) {
+      if (!!key === true) {
+        this.moveResourceConfig = {
+          move: false,
+          keySrc: key,
+          bucketSrc: this.bucket
+        }
+        this.moveResourceVisible = true
+      }
+    },
     handleCommand (command) {
       if (command['type'] === 'download') {
         // 下载文件
@@ -181,8 +200,7 @@ export default {
         this.deleteBucketResource(command['key'])
       } else if (command['type'] === 'rename') {
         // 文件重命名
-        const { key = '' } = command
-        console.log(key)
+        this.openMoveDialog(command['key'])
       }
     }
   },
@@ -206,6 +224,9 @@ export default {
         return `${year}-${month}-${day} ${hour}:${min}:${sec}`
       }
     }
+  },
+  components: {
+    VMoveResource
   }
 }
 </script>

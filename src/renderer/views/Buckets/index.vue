@@ -20,7 +20,7 @@
         <el-button @click="addBucket" style="font-weight: 200;color: #fff;" type="text" icon="el-icon-circle-plus">新增</el-button>
       </div>
       <v-add-bucket
-        :visible.sync="addBktVisible"
+        :visible="addBktVisible"
         @close="addBktVisible = false"
         @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
