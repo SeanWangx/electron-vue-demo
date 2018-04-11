@@ -82,9 +82,13 @@ export default {
           }
           return acc
         }, null)
-        _index = (_index === null && this.buckets[0]) ? 0 : null
+        if (_index === null) {
+          _index = this.buckets[0] ? 0 : null
+        }
         if (_index !== null) {
-          document.querySelectorAll('.bucket-item')[_index].click()
+          this.$nextTick(() => {
+            document.querySelectorAll('.bucket-item')[_index].click()
+          })
         } else {
           this.bucket = ''
         }
