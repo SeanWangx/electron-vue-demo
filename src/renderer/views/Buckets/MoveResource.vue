@@ -89,6 +89,7 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           let payload = {
+            move: this.config['move'],
             keySrc: this.config['keySrc'],
             bucketSrc: this.config['bucketSrc'],
             keyDest: this.form.keyDest + this.form.appendText,
