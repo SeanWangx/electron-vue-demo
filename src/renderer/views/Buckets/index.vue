@@ -56,9 +56,7 @@ export default {
     })
   },
   beforeMount () {
-    this.fetchBuckets({}).then(() => {
-      this.defaultClick('')
-    })
+    this.fetchBuckets()
     /* this.clipboard = new Clipboard('.btn-copy')
     this.clipboard.on('success', e => {
       this.$message.success(`复制空间域名成功: ${this.domainDefault} !`)
@@ -67,12 +65,12 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchBuckets: 'FETCH_BUCKETS',
-      createBucket: 'CREATE_BUCKET',
-      deleteBucket: 'DELETE_BUCKET',
-      fetchList: 'FETCH_LIST',
-      fetchBucketDomain: 'FETCH_BUCKET_DOMAIN',
-      fetchBucketZone: 'FETCH_BUCKET_ZONE'
+      _fetchBuckets: 'FETCH_BUCKETS',
+      _createBucket: 'CREATE_BUCKET',
+      _deleteBucket: 'DELETE_BUCKET',
+      _fetchList: 'FETCH_LIST',
+      _fetchBucketDomain: 'FETCH_BUCKET_DOMAIN',
+      _fetchBucketZone: 'FETCH_BUCKET_ZONE'
     }),
     defaultClick (bucket) {
       this.$nextTick(() => {
@@ -94,20 +92,28 @@ export default {
         }
       })
     },
+    async fetchBuckets () {
+      try {
+        await this._fetchBuckets({})
+        this.defaultClick(this.bucket)
+      } catch (e) {
+        console.warn(e)
+      }
+    },
     async selectBucket (bucketObj) {
       this.domains = bucketObj['domains'] || []
       this.zone = bucketObj['zone'] || ''
       try {
         // 查询存储空间区域
         if (!!this.zone === false) {
-          this.zone = await this.fetchBucketZone({ bucket: bucketObj['name'] })
+          this.zone = await this._fetchBucketZone({ bucket: bucketObj['name'] })
         }
         // 查询存储空间域名
-        if (!!this.domains || this.domains.length === 0) {
-          this.domains = await this.fetchBucketDomain({ bucket: bucketObj['name'] })
+        if (!!this.domains === false || this.domains.length === 0) {
+          this.domains = await this._fetchBucketDomain({ bucket: bucketObj['name'] })
         }
         // 查询存储空间数据记录
-        await this.fetchList({ bucket: bucketObj['name'] })
+        await this._fetchList({ bucket: bucketObj['name'] })
       } catch (e) {
         console.warn(e)
       } finally {
@@ -120,9 +126,8 @@ export default {
     async handleAddSuccess (form = {}) {
       try {
         const { bucket, region } = form
-        await this.createBucket({ bucket, region })
-        await this.fetchBuckets({})
-        this.defaultClick(this.bucket)
+        await this._createBucket({ bucket, region })
+        this.fetchBuckets()
       } catch (e) {
         console.warn(e)
       }
@@ -133,9 +138,8 @@ export default {
           title: '提示',
           content: `是否确认删除: ${bucket} ?`
         })
-        await this.deleteBucket({ bucket })
-        await this.fetchBuckets({})
-        this.defaultClick(this.bucket)
+        await this._deleteBucket({ bucket })
+        this.fetchBuckets()
       } catch (e) {
         console.warn(e)
       }
