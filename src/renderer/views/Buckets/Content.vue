@@ -146,7 +146,7 @@ export default {
       resourceListCount: 'resourceListCount'
     }),
     resourceListFSize () {
-      let fsize = this.resourceListData.reduce((acc, cur) => acc + cur['fsize'], 0)
+      let fsize = this.resourceListData.reduce((acc, cur) => acc + (cur['fsize'] || 0), 0)
       return parseFloat(fsize / 1024).toFixed(2)
     },
     bucketSelected () {
