@@ -4,6 +4,7 @@
       <el-button size="small">上传<i class="el-icon-upload el-icon--right"></i></el-button>
       <el-button size="small" @click="() => fetchList()">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
       <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resourceListCount }} 个文件</span>
+      <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resourceListFSize }} KB存储量</span>
       <el-input clearable size="small"
         v-model="prefix"
         prefix-icon="el-icon-search"
@@ -95,10 +96,10 @@
             <el-dropdown trigger="click" @command="handleCommand">
               <el-button type="text" size="small" icon="el-icon-more"></el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item :command="{type: 'download'}">下载</el-dropdown-item>
-                <el-dropdown-item :command="{type: 'rename', key: scope.row['key']}">重命名</el-dropdown-item>
-                <el-dropdown-item :command="{type: 'move', key: scope.row['key']}">移动</el-dropdown-item>
-                <el-dropdown-item :command="{type: 'delete', key: scope.row['key']}">删除</el-dropdown-item>
+                <el-dropdown-item :command="{type: 'download'}">下载文件</el-dropdown-item>
+                <el-dropdown-item :command="{type: 'rename', key: scope.row['key']}">重命名文件</el-dropdown-item>
+                <el-dropdown-item :command="{type: 'move', key: scope.row['key']}">移动文件</el-dropdown-item>
+                <el-dropdown-item :command="{type: 'delete', key: scope.row['key']}">删除文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'copy', key: scope.row['key']}">复制外链</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -144,6 +145,10 @@ export default {
       resourceListData: 'resourceListData',
       resourceListCount: 'resourceListCount'
     }),
+    resourceListFSize () {
+      let fsize = this.resourceListData.reduce((acc, cur) => acc + cur['fsize'], 0)
+      return parseFloat(fsize / 1024).toFixed(2)
+    },
     bucketSelected () {
       return this.buckets.filter(item => item['name'] === this.bucket)[0] || {}
     },
