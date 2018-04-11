@@ -134,6 +134,7 @@ export default {
           bucket: this.bucket
         })
         await this.fetchList()
+        this.$message.success(`删除资源【${key}】成功！`)
       } catch (e) {
         console.warn(e)
       }

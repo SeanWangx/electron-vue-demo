@@ -128,6 +128,7 @@ export default {
         const { bucket, region } = form
         await this._createBucket({ bucket, region })
         this.fetchBuckets()
+        this.$message.success(`新增存储空间【${bucket}】成功！`)
       } catch (e) {
         console.warn(e)
       }
@@ -140,6 +141,7 @@ export default {
         })
         await this._deleteBucket({ bucket })
         this.fetchBuckets()
+        this.$message.success(`删除存储空间【${bucket}】成功！`)
       } catch (e) {
         console.warn(e)
       }
