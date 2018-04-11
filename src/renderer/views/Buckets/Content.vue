@@ -58,7 +58,40 @@
           align="center"
           label="操作">
           <template slot-scope="scope">
-            <el-button @click="() => {}" type="text" size="small" icon="el-icon-view"></el-button>
+            <el-popover
+              placement="left"
+              width="300"
+              trigger="click">
+              <el-button slot="reference" type="text" size="small" icon="el-icon-view" @click="() => previewImg(scope.row)"></el-button>
+              <div class="file-container">
+                <div class="file-title">{{ previewInfo['key'] }}</div>
+                <div class="file-preview">
+                  <img :src="previewInfo['src']">
+                  <i v-show="previewInfo['src'] === ''" class="el-icon-loading"></i>
+                </div>
+                <div class="file-info">
+                  <p>
+                    <span class="info-title">文件大小:</span>
+                    <span class="info-text">{{ parseFloat(previewInfo['fsize'] / 1024).toFixed(2) }} KB</span>
+                  </p>
+                  <p>
+                    <span class="info-title">最后更新:</span>
+                    <span class="info-text">{{ parseInt(previewInfo['putTime'] / 10000) | dateFormat }}</span>
+                  </p>
+                  <p>
+                    <span class="info-title">外链地址:</span>
+                    <span class="info-text">
+                      <a @click="() => toFileLink(previewInfo['key'])">{{ `http://${domain}/${previewInfo['key']}` }}</a>
+                    </span>
+                  </p>
+                </div>
+                <div class="file-operator">
+                  <el-button size="mini" @click="() => {}" round>下载文件</el-button>
+                  <el-button size="mini" @click="() => copyLink(scope.row['key'])" round>复制外链</el-button>
+                </div>
+              </div>
+            </el-popover>
+
             <el-dropdown trigger="click" @command="handleCommand">
               <el-button type="text" size="small" icon="el-icon-more"></el-button>
               <el-dropdown-menu slot="dropdown">
@@ -84,7 +117,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { objectEmptyFilter } from '@/utils/tools'
-import { clipboard } from 'electron'
+import { clipboard, shell } from 'electron'
 import VMoveResource from './MoveResource'
 const { dialog } = require('electron').remote
 
@@ -101,7 +134,8 @@ export default {
       domain: '',
       downloadPath: '',
       moveResourceVisible: false,
-      moveResourceConfig: {}
+      moveResourceConfig: {},
+      previewInfo: {}
     }
   },
   computed: {
@@ -206,6 +240,18 @@ export default {
         // 文件移动
         this.openMoveDialog(command['key'], true)
       }
+    },
+    toFileLink (key) {
+      shell.openExternal(`http://${this.domain}/${key}`)
+    },
+    previewImg (fileInfo) {
+      this.previewInfo = { ...fileInfo, src: '' }
+      let url = /\.(jpe?g|gif|png|svg|ico)$/i.test(this.previewInfo['key'].toLowerCase()) ? `http://${this.domain}/${this.previewInfo['key']}` : '/static/no-prev.png'
+      const img = new Image()
+      img.src = url
+      img.onload = () => {
+        this.previewInfo.src = url
+      }
     }
   },
   watch: {
@@ -236,5 +282,85 @@ export default {
 </script>
 
 <style scoped>
-
+.file-container {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 14px;
+}
+.file-title {
+    font-size: 16px;
+    text-align: center;
+}
+.file-preview {
+    display: block;
+    width: 270px;
+    height: 270px;
+    margin: 20px auto;
+    padding: 0;
+    position: relative;
+    line-height: 270px;
+}
+.file-preview i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 28px;
+    padding: 121px;
+}
+.file-preview img {
+    display: inline-block;
+    vertical-align: middle;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+.file-info {
+    display: block;
+    width: 260px;
+    height: auto;
+    margin: 20px auto;
+    padding: 0;
+    position: relative;
+    color: #7a8599;
+    text-align: left;
+    font-size: 0;
+}
+.file-info p {
+  margin: 0 0 10px 0;
+}
+.file-info span {
+    display: inline-block;
+    word-wrap: break-word;
+    font-size: 14px;
+}
+span.info-title {
+    width: 80px;
+}
+span.info-text {
+    width: calc(100% - 80px);
+    vertical-align: top;
+}
+span.info-text a, a:active, a:hover {
+    cursor: pointer;
+    color: #409EFF;
+    text-decoration: none;
+}
+.file-operator {
+    display: block;
+    width: 260px;
+    height: auto;
+    margin: 20px auto;
+    padding: 0;
+    position: relative;
+    text-align: center;
+    font-size: 0;
+}
 </style>
