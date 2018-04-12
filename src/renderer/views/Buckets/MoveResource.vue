@@ -47,6 +47,7 @@ export default {
       type: Boolean,
       default: false
     },
+    // move, bucketsrc, keySrc
     config: {
       type: Object,
       required: true
