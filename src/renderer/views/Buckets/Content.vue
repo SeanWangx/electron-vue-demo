@@ -119,7 +119,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { objectEmptyFilter } from '@/utils/tools'
 import { clipboard, shell } from 'electron'
-import VMoveResource from './MoveResource'
+import VMoveResource from './components/MoveResource'
 const { dialog } = require('electron').remote
 
 export default {

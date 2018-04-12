@@ -48,7 +48,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import VAddBucket from './AddBucket'
+import VAddBucket from './components/AddBucket'
 import VContent from './Content'
 import VUpload from './Upload'
 
