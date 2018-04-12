@@ -23,6 +23,8 @@ function createWindow () {
     webPreferences: { webSecurity: false },
     useContentSize: true,
     resizable: false,
+    fullscreenable: true,
+    maximizable: true,
     height: 600,
     width: 540
   })
