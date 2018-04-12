@@ -97,7 +97,6 @@
               <el-button type="text" size="small" icon="el-icon-more"></el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="{type: 'download'}">下载文件</el-dropdown-item>
-                <el-dropdown-item :command="{type: 'rename', key: scope.row['key']}">重命名文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'move', key: scope.row['key']}">移动文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'delete', key: scope.row['key']}">删除文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'copy', key: scope.row['key']}">复制外链</el-dropdown-item>
@@ -206,10 +205,10 @@ export default {
     },
     async moveBucketResource (payload) {
       try {
-        const { bucketSrc, bucketDest, keySrc, keyDest, move } = payload
+        const { bucketSrc, bucketDest, keySrc, keyDest } = payload
         await this._moveBucketResource({ bucketSrc, bucketDest, keySrc, keyDest })
         await this.fetchList()
-        this.$message.success(move ? '资源文件移动成功！' : '资源文件重命名成功！')
+        this.$message.success('资源文件移动成功！')
       } catch (e) {
         console.warn(e)
       }
@@ -227,10 +226,9 @@ export default {
       clipboard.writeText(`http://${this.domain}/${key}`)
       this.$message.success('复制外链成功！')
     },
-    openMoveDialog (key, move = false) {
+    openMoveDialog (key) {
       if (!!key === true) {
         this.moveResourceConfig = {
-          move: move,
           keySrc: key,
           bucketSrc: this.bucket
         }
@@ -247,12 +245,9 @@ export default {
       } else if (command['type'] === 'delete') {
         // 删除文件
         this.deleteBucketResource(command['key'])
-      } else if (command['type'] === 'rename') {
-        // 文件重命名
-        this.openMoveDialog(command['key'])
       } else if (command['type'] === 'move') {
         // 文件移动
-        this.openMoveDialog(command['key'], true)
+        this.openMoveDialog(command['key'])
       }
     },
     toFileLink (key) {

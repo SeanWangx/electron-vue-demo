@@ -2,7 +2,7 @@
   <el-dialog
     center
     width="500px"
-    :title="config['move'] ? '移动资源' : '重命名资源'"
+    title="移动资源"
     :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -24,7 +24,6 @@
       </el-form-item>
       <el-form-item label="存储空间" prop="bucketDest">
         <el-select
-          :disabled="config['move'] === false"
           v-model="form.bucketDest"
           placeholder="请选择存储空间"
           style="width: 100%;">
@@ -47,7 +46,7 @@ export default {
       type: Boolean,
       default: false
     },
-    // move, bucketsrc, keySrc
+    // bucketsrc, keySrc
     config: {
       type: Object,
       required: true
@@ -90,7 +89,6 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           let payload = {
-            move: this.config['move'],
             keySrc: this.config['keySrc'],
             bucketSrc: this.config['bucketSrc'],
             keyDest: this.form.keyDest + this.form.appendText,
