@@ -100,6 +100,7 @@
                 <el-dropdown-item :command="{type: 'move', key: scope.row['key']}">移动文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'delete', key: scope.row['key']}">删除文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'copy', key: scope.row['key']}">复制外链</el-dropdown-item>
+                <el-dropdown-item :command="{type: 'ctype', key: scope.row['key'], ctype: scope.row['type']}">{{ `转${scope.row['type'] === 0 ? '低频' : '标准'}存储` }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -178,7 +179,8 @@ export default {
     ...mapActions({
       _fetchList: 'FETCH_LIST',
       _deleteBucketResource: 'DELETE_BUCKET_RESOURCE',
-      _moveBucketResource: 'MOVE_BUCKET_RESOURCE'
+      _moveBucketResource: 'MOVE_BUCKET_RESOURCE',
+      _changeFileType: 'CHANGE_FILE_TYPE'
     }),
     async fetchList (prefix = '') {
       try {
@@ -209,6 +211,24 @@ export default {
         await this._moveBucketResource({ bucketSrc, bucketDest, keySrc, keyDest })
         await this.fetchList()
         this.$message.success('资源文件移动成功！')
+      } catch (e) {
+        console.warn(e)
+      }
+    },
+    async changeFileType (payload) {
+      try {
+        const { key, type = 0 } = payload
+        await this.$showConfirm({
+          title: '提示',
+          content: `是否将【${key}】 转为${type === 0 ? '低频' : '标准'}存储？`
+        })
+        await this._changeFileType({
+          key,
+          bucket: this.bucket,
+          type: 0 - type + 1
+        })
+        await this.fetchList()
+        this.$message.success('修改存储方式成功！')
       } catch (e) {
         console.warn(e)
       }
@@ -248,6 +268,12 @@ export default {
       } else if (command['type'] === 'move') {
         // 文件移动
         this.openMoveDialog(command['key'])
+      } else if (command['type'] === 'ctype') {
+        // 转换存储格式
+        this.changeFileType({
+          key: command['key'],
+          type: command['ctype']
+        })
       }
     },
     toFileLink (key) {

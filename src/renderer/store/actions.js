@@ -305,5 +305,37 @@ export default {
         reject(new Error('缺失秘钥'))
       }
     })
+  },
+  /**
+   * 转换资源存储格式
+   */
+  [A.CHANGE_FILE_TYPE] ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      const { accessKey, secretKey } = state
+      const mac = { accessKey, secretKey }
+      if (!!mac.accessKey && !!mac.secretKey) {
+        const { bucket, key, type = 0 } = payload
+        if (!!bucket && !!key) {
+          let entry = `${bucket}:${key}`
+          let encodedEntryURI = urlSafeBase64Encode(entry)
+          let uri = `/chtype/${encodedEntryURI}/type/${type}`
+          let accessToken = getAccessToken(mac, uri)
+          axios.post(`http://rs.qiniu.com${uri}`, null, {
+            method: 'post',
+            headers: {
+              'Authorization': `QBox ${accessToken}`
+            }
+          }).then(res => {
+            resolve(res)
+          }).catch(err => {
+            reject(err)
+          })
+        } else {
+          reject(new Error('缺失请求资源名'))
+        }
+      } else {
+        reject(new Error('缺失秘钥'))
+      }
+    })
   }
 }
