@@ -117,6 +117,7 @@ export default {
     },
     async selectBucket (bucketObj) {
       this.view = 'VContent'
+      this.needRefresh = false
       this.domains = bucketObj['domains'] || []
       this.zone = bucketObj['zone'] || ''
       try {
