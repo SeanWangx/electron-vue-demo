@@ -140,18 +140,18 @@ export const getAccessToken = (mac, url) => {
 
 /**
  * 获取上传策略
- * @param {*} bucket 存储空间名
- * @param {*} key 资源名
+ * @param {*} options 上传策略
  */
-const getPutPolicy = (bucket, key) => {
+const getPutPolicy = (options) => {
   return JSON.stringify({
-    scope: `${bucket}:${key}`,
-    deadline: new Date().getTime() + 3600
+    deadline: new Date().getTime() + 3600,
+    ...options
   })
 }
 
-export const getUploadToken = (bucket, key, accessKey, secretKey) => {
-  let putPolicy = getPutPolicy(bucket, key)
+export const getUploadToken = (mac, options) => {
+  const { accessKey, secretKey } = mac
+  let putPolicy = getPutPolicy(options)
   let encodedPutPolicy = urlSafeBase64Encode(putPolicy)
   let sign = Crypto.createHmac('sha1', secretKey).update(encodedPutPolicy).digest()
   let encodedSign = urlSafeBase64Encode(sign)

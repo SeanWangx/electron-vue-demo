@@ -24,12 +24,11 @@
           <div>选择上传文件存储类型:</div>
           <div>
             <el-radio-group v-model="ctype" size="small">
-              <el-radio label="0" border>标准存储</el-radio>
-              <el-radio label="1" border>低频存储</el-radio>
+              <el-radio :label="0" border>标准存储</el-radio>
+              <el-radio :label="1" border>低频存储</el-radio>
             </el-radio-group>
           </div>
         </div>
-        <el-button @click="test">Test</el-button>
       </div>
     </div>
   </el-main>
@@ -62,7 +61,7 @@ export default {
   data () {
     return {
       refresh: false,
-      ctype: '0',
+      ctype: 0,
       uploadData: {}
     }
   },
@@ -77,7 +76,7 @@ export default {
   },
   deactivated () {
     this.refresh = false
-    this.ctype = '0'
+    this.ctype = 0
     this.uploadData = {}
     this.$refs['upload'].clearFiles()
   },
@@ -89,8 +88,15 @@ export default {
       shell.openExternal('https://developer.qiniu.com/sdk#official-tool')
     },
     beforeUpload (file) {
-      console.log(file)
-      let uploadToken = getUploadToken(this.bucket, file.name, this.accessKey, this.secretKey)
+      const mac = {
+        accessKey: this.accessKey,
+        secretKey: this.secretKey
+      }
+      const options = {
+        scope: `${this.bucket}:${file.name}`,
+        fileType: this.ctype
+      }
+      let uploadToken = getUploadToken(mac, options)
       this.$set(this.uploadData, 'key', file.name)
       this.$set(this.uploadData, 'token', uploadToken)
     },
