@@ -40,6 +40,7 @@ export default {
   },
   deactivated () {
     this.refresh = false
+    this.ctype = '0'
   },
   methods: {
     close () {
