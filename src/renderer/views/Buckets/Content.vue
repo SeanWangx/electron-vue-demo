@@ -1,7 +1,7 @@
 <template>
   <el-main style="font-size: 0;height: 100%;position: relative;">
     <div style="margin-bottom: 10px;position: relative;">
-      <el-button size="small">上传<i class="el-icon-upload el-icon--right"></i></el-button>
+      <el-button size="small" @click="() => $emit('change', { view: 'VUpload' })">上传<i class="el-icon-upload el-icon--right"></i></el-button>
       <el-button size="small" @click="() => fetchList()">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
       <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resourceListCount }} 个文件</span>
       <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resourceListFSize }} KB存储量</span>
@@ -127,6 +127,10 @@ export default {
     bucket: {
       type: String,
       required: true
+    },
+    refresh: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -165,6 +169,11 @@ export default {
         this.domain = this.domains[0] || ''
       }
     })
+  },
+  activated () {
+    if (this.refresh) {
+      this.fetchList()
+    }
   },
   methods: {
     ...mapActions({

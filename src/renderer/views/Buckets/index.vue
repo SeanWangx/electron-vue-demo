@@ -24,11 +24,23 @@
         @close="addBktVisible = false"
         @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
-    <v-content v-if="bucket"
+
+    <keep-alive>
+      <component v-if="bucket !== ''"
+        :is="view"
+        :bucket="bucket"
+        :domains="domains"
+        :zone="zone"
+        :refresh="needRefresh"
+        @change="handleViewChange"></component>
+    </keep-alive>
+
+    <!-- <v-content v-if="bucket"
       :bucket="bucket"
       :domains="domains"
-      :zone="zone"></v-content>
-    <el-main v-else class="flex-container">
+      :zone="zone"></v-content> -->
+
+    <el-main v-if="bucket === ''" class="flex-container">
       <div style="flex: 1;text-align: center;">请选择或者<el-button style="margin: 0 4px;" type="primary" size="mini" @click="addBucket">新建</el-button>存储空间</div>
     </el-main>
   </el-container>
@@ -38,10 +50,14 @@
 import { mapGetters, mapActions } from 'vuex'
 import VAddBucket from './AddBucket'
 import VContent from './Content'
+import VUpload from './Upload'
 
 export default {
   data () {
     return {
+      needRefresh: false,
+      view: 'VContent',
+
       bucket: '',
       domains: [],
       zone: '',
@@ -66,6 +82,11 @@ export default {
       _fetchBucketDomain: 'FETCH_BUCKET_DOMAIN',
       _fetchBucketZone: 'FETCH_BUCKET_ZONE'
     }),
+    handleViewChange (v = {}) {
+      const { view = 'VContent', refresh = false } = v
+      this.needRefresh = refresh
+      this.view = view
+    },
     defaultClick (bucket) {
       this.$nextTick(() => {
         let _index = this.buckets.reduce((acc, cur, index) => {
@@ -95,6 +116,7 @@ export default {
       }
     },
     async selectBucket (bucketObj) {
+      this.view = 'VContent'
       this.domains = bucketObj['domains'] || []
       this.zone = bucketObj['zone'] || ''
       try {
@@ -143,6 +165,7 @@ export default {
   },
   components: {
     VContent,
+    VUpload,
     VAddBucket
   }
 }
