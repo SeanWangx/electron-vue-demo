@@ -36,18 +36,20 @@ export default {
    */
   [A.FETCH_BUCKETS] ({ commit, state }, payload = {}) {
     return new Promise((resolve, reject) => {
-      let accessKey
-      let secretKey
+      const mac = {
+        accessKey: '',
+        secretKey: ''
+      }
       if (payload['accessKey'] && payload['secretKey']) {
-        accessKey = payload['accessKey']
-        secretKey = payload['secretKey']
+        mac.accessKey = payload['accessKey']
+        mac.secretKey = payload['secretKey']
       } else if (state['accessKey'] && state['secretKey']) {
-        accessKey = state['accessKey']
-        secretKey = state['secretKey']
+        mac.accessKey = state['accessKey']
+        mac.secretKey = state['secretKey']
       } else {
         reject(new Error('Missing keys'))
       }
-      let accessToken = getAccessToken('/buckets', accessKey, secretKey)
+      let accessToken = getAccessToken(mac, '/buckets')
       axios.get('http://rs.qbox.me/buckets', {
         method: 'get',
         headers: {
@@ -75,10 +77,11 @@ export default {
   [A.CREATE_BUCKET] ({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
       const { accessKey, secretKey } = state
-      if (!!accessKey && !!secretKey) {
+      const mac = { accessKey, secretKey }
+      if (!!mac.accessKey && !!mac.secretKey) {
         const { bucket, region } = payload
         let encodedBucketName = urlSafeBase64Encode(bucket)
-        let accessToken = getAccessToken(`/mkbucketv2/${encodedBucketName}/region/${region}`, accessKey, secretKey)
+        let accessToken = getAccessToken(mac, `/mkbucketv2/${encodedBucketName}/region/${region}`)
         axios.post(`http://rs.qiniu.com/mkbucketv2/${encodedBucketName}/region/${region}`, null, {
           method: 'post',
           headers: {
@@ -100,9 +103,10 @@ export default {
   [A.DELETE_BUCKET] ({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
       const { accessKey, secretKey } = state
-      if (!!accessKey && !!secretKey) {
+      const mac = { accessKey, secretKey }
+      if (!!mac.accessKey && !!mac.secretKey) {
         const { bucket } = payload
-        let accessToken = getAccessToken(`/drop/${bucket}`, accessKey, secretKey)
+        let accessToken = getAccessToken(mac, `/drop/${bucket}`)
         axios.post(`http://rs.qiniu.com/drop/${bucket}`, null, {
           method: 'post',
           headers: {
@@ -124,7 +128,8 @@ export default {
   [A.FETCH_LIST] ({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
       const { accessKey, secretKey } = state
-      if (!!accessKey && !!secretKey) {
+      const mac = { accessKey, secretKey }
+      if (!!mac.accessKey && !!mac.secretKey) {
         const {
           bucket,
           marker = '',
@@ -140,7 +145,7 @@ export default {
           reject(new Error('缺失存储空间名'))
         } else {
           let uri = `/list?bucket=${bucket}${Marker}${Limit}${Prefix}${Delimiter}`
-          let accessToken = getAccessToken(uri, accessKey, secretKey)
+          let accessToken = getAccessToken(mac, uri)
           axios.get(`http://rsf.qbox.me${uri}`, {
             method: 'get',
             headers: {
@@ -166,13 +171,14 @@ export default {
   [A.FETCH_BUCKET_DOMAIN] ({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
       const { accessKey, secretKey } = state
-      if (!!accessKey && !!secretKey) {
+      const mac = { accessKey, secretKey }
+      if (!!mac.accessKey && !!mac.secretKey) {
         const { bucket } = payload
         if (!!bucket === false) {
           reject(new Error('缺失存储空间名'))
         } else {
           let uri = `/v6/domain/list?tbl=${bucket}`
-          let accessToken = getAccessToken(uri, accessKey, secretKey)
+          let accessToken = getAccessToken(mac, uri)
           axios.get(`http://api.qiniu.com${uri}`, {
             method: 'get',
             headers: {
@@ -196,13 +202,14 @@ export default {
   [A.FETCH_BUCKET_ZONE] ({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
       const { accessKey, secretKey } = state
-      if (!!accessKey && !!secretKey) {
+      const mac = { accessKey, secretKey }
+      if (!!mac.accessKey && !!mac.secretKey) {
         const { bucket } = payload
         if (!!bucket === false) {
           reject(new Error('缺失存储空间名'))
         } else {
-          let uri = `/v2/query?ak=${accessKey}&bucket=${bucket}`
-          let accessToken = getAccessToken(uri, accessKey, secretKey)
+          let uri = `/v2/query?ak=${mac.accessKey}&bucket=${bucket}`
+          let accessToken = getAccessToken(mac, uri)
           axios.get(`http://uc.qbox.me${uri}`, {
             methods: 'get',
             headers: {
@@ -239,13 +246,14 @@ export default {
   [A.DELETE_BUCKET_RESOURCE] ({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
       const { accessKey, secretKey } = state
-      if (!!accessKey && !!secretKey) {
+      const mac = { accessKey, secretKey }
+      if (!!mac.accessKey && !!mac.secretKey) {
         const { bucket, key } = payload
         if (!!bucket && !!key) {
           let entry = `${bucket}:${key}`
           let encodedEntryURI = urlSafeBase64Encode(entry)
           let uri = `/delete/${encodedEntryURI}`
-          let accessToken = getAccessToken(uri, accessKey, secretKey)
+          let accessToken = getAccessToken(mac, uri)
           axios.post(`http://rs.qiniu.com${uri}`, null, {
             method: 'post',
             headers: {
@@ -270,7 +278,8 @@ export default {
   [A.MOVE_BUCKET_RESOURCE] ({ commit, state }, payload) {
     return new Promise((resolve, reject) => {
       const { accessKey, secretKey } = state
-      if (!!accessKey && !!secretKey) {
+      const mac = { accessKey, secretKey }
+      if (!!mac.accessKey && !!mac.secretKey) {
         const { bucketSrc, keySrc, bucketDest, keyDest } = payload
         if (!!bucketSrc && !!bucketDest && !!keySrc && !!keyDest) {
           let entrySrc = `${bucketSrc}:${keySrc}`
@@ -278,7 +287,7 @@ export default {
           let encodedEntryURISrc = urlSafeBase64Encode(entrySrc)
           let encodedEntryURIDest = urlSafeBase64Encode(entryDest)
           let uri = `/move/${encodedEntryURISrc}/${encodedEntryURIDest}`
-          let accessToken = getAccessToken(uri, accessKey, secretKey)
+          let accessToken = getAccessToken(mac, uri)
           axios.post(`http://rs.qiniu.com${uri}`, null, {
             method: 'post',
             headers: {

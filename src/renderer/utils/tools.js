@@ -124,11 +124,13 @@ export const urlSafeBase64Encode = v => {
 
 /**
  * 获取Authorization
+ * @param {*} mac 秘钥
+ *          |- accessKey
+ *          |- secretKey
  * @param {*} url 地址
- * @param {*} accessKey ak
- * @param {*} secretKey sk
  */
-export const getAccessToken = (url, accessKey, secretKey) => {
+export const getAccessToken = (mac, url) => {
+  const { accessKey, secretKey } = mac
   let signingStr = url + '\n'
   let sign = Crypto.createHmac('sha1', secretKey).update(signingStr).digest()
   let encodedSign = urlSafeBase64Encode(sign)
