@@ -11,7 +11,10 @@ export default {
     axios.defaults.validateStatus = status => true
     axios.interceptors.response.use(response => {
       if (response.status !== 200 && response.data.error) {
-        Vue.prototype.$message.error(response.data.error)
+        Vue.prototype.$message.error({
+          message: response.data.error,
+          center: true
+        })
       }
       return response.status === 200 ? response.data : Promise.reject(response)
     }, error => {

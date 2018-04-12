@@ -200,7 +200,10 @@ export default {
           bucket: this.bucket
         })
         await this.fetchList()
-        this.$message.success(`删除资源【${key}】成功！`)
+        this.$message.success({
+          message: `删除资源【${key}】成功！`,
+          center: true
+        })
       } catch (e) {
         console.warn(e)
       }
@@ -210,7 +213,10 @@ export default {
         const { bucketSrc, bucketDest, keySrc, keyDest } = payload
         await this._moveBucketResource({ bucketSrc, bucketDest, keySrc, keyDest })
         await this.fetchList()
-        this.$message.success('资源文件移动成功！')
+        this.$message.success({
+          message: '资源文件移动成功！',
+          center: true
+        })
       } catch (e) {
         console.warn(e)
       }
@@ -228,7 +234,10 @@ export default {
           type: 0 - type + 1
         })
         await this.fetchList()
-        this.$message.success('修改存储方式成功！')
+        this.$message.success({
+          message: '修改存储方式成功！',
+          center: true
+        })
       } catch (e) {
         console.warn(e)
       }
@@ -244,7 +253,10 @@ export default {
     },
     copyLink (key) {
       clipboard.writeText(`http://${this.domain}/${key}`)
-      this.$message.success('复制外链成功！')
+      this.$message.success({
+        message: '复制外链成功！',
+        center: true
+      })
     },
     openMoveDialog (key) {
       if (!!key === true) {

@@ -106,11 +106,17 @@ export default {
     handleSuccess (...args) {
       console.log(args)
       this.refresh = true
-      this.$message.success('上传文件成功！')
+      this.$message.success({
+        message: '上传文件成功！',
+        center: true
+      })
     },
     handleError (...args) {
       console.log(args)
-      this.$message.error('上传文件失败！')
+      this.$message.error({
+        message: '上传文件失败！',
+        center: true
+      })
     },
     test () {
       console.log(this.bucket, this.uploadURL)
