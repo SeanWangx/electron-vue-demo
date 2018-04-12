@@ -296,6 +296,14 @@ export default {
 </script>
 
 <style scoped>
+.table-container {
+    display: block;
+    width: 100%;
+    height: calc(100% - 84px);
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
 .file-container {
     display: block;
     width: 100%;

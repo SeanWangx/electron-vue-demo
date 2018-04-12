@@ -1,16 +1,42 @@
 <template>
-  <div>
-    <p>Upload</p>
-    <el-button @click="refresh = !refresh">{{ refresh }}</el-button>
-    <el-button @click="back">Back</el-button>
-  </div>
+  <el-main style="font-size: 0;height: 100%;position: relative;">
+    <div style="margin-bottom: 10px;position: relative;">
+      <el-button size="small" @click="back" icon="el-icon-back"></el-button>
+    </div>
+    <div class="upload-container">
+      <el-upload
+        class="upload-demo"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :on-preview="handlePreview"
+        :on-remove="handleRemove"
+        :before-remove="beforeRemove"
+        multiple
+        :limit="3"
+        :on-exceed="handleExceed"
+        :file-list="fileList">
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+      </el-upload>
+    </div>
+    <!-- <el-button size="small" @click="refresh = !refresh">{{ refresh }}</el-button> -->
+  </el-main>
 </template>
 
 <script>
 export default {
   data () {
     return {
-      refresh: false
+      refresh: false,
+      fileList: [
+        {
+          name: 'food.jpeg',
+          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+        },
+        {
+          name: 'food2.jpeg',
+          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+        }
+      ]
     }
   },
   deactivated () {
@@ -19,11 +45,30 @@ export default {
   methods: {
     back () {
       this.$emit('change', { view: 'VContent', refresh: this.refresh })
+    },
+    handleRemove (file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview (file) {
+      console.log(file)
+    },
+    handleExceed (files, fileList) {
+      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+    },
+    beforeRemove (file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`)
     }
   }
 }
 </script>
 
 <style scoped>
-
+.upload-container {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: calc(100% - 48px);
+    margin: 0;
+    padding: 0;
+}
 </style>
