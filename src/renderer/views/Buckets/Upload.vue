@@ -7,6 +7,7 @@
     </div>
     <div class="upload-container">
       <el-upload
+        ref="upload"
         class="upload-content"
         action="https://jsonplaceholder.typicode.com/posts/"
         :on-preview="handlePreview">
@@ -41,6 +42,7 @@ export default {
   deactivated () {
     this.refresh = false
     this.ctype = '0'
+    this.$refs['upload'].clearFiles()
   },
   methods: {
     close () {
