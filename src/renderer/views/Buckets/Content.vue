@@ -1,6 +1,6 @@
 <template>
   <el-main style="font-size: 0;height: 100%;position: relative;">
-    <div style="margin-bottom: 10px;position: relative;">
+    <div style="margin-bottom: 10px;position: relative;height: 32px;">
       <el-button size="small" @click="() => $emit('change', { view: 'VUpload' })">上传<i class="el-icon-upload el-icon--right"></i></el-button>
       <el-button size="small" @click="() => fetchList()">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
       <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resourceListCount }} 个文件</span>
@@ -12,7 +12,7 @@
         placeholder="请输入文件前缀搜索"
         @change="v => fetchList(v)"></el-input>
     </div>
-    <div style="margin-bottom: 10px;position: relative;">
+    <div style="margin-bottom: 10px;position: relative;height: 32px;">
       <span style="font-size: 14px;">外链默认域名</span>
       <el-select size="small" v-model="domain" style="width: 230px;vertical-align: top;margin: 0 10px;">
         <el-option v-for="(item, index) in domains" :key="index"
@@ -27,12 +27,15 @@
         :header-cell-style="{'background': '#f5f7fa'}"
         :data="resourceListData">
         <el-table-column
+          sortable
           prop="key"
           label="文件名"></el-table-column>
         <el-table-column
+          sortable
           prop="mimeType"
           label="文件类型"></el-table-column>
         <el-table-column
+          sortable
           prop="type"
           label="存储类型">
           <template slot-scope="scope">
@@ -41,6 +44,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          sortable
           prop="fsize"
           label="文件大小">
           <template slot-scope="scope">
@@ -48,6 +52,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          sortable
           prop="putTime"
           label="最近更新时间">
           <template slot-scope="scope">

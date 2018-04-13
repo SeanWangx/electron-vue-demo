@@ -5,7 +5,8 @@
 ### Done
 * [x] 获取存储空间列表
 * [x] 新建、删除存储空间
-* [x] 获取、刷新存储空间内资源列表，筛选指定前缀的资源
+* [x] 获取、刷新、筛选指定前缀资源
+* [x] 资源列表排序
 * [x] 删除指定资源
 * [x] 复制资源外链地址
 * [x] 修改默认外链域名
@@ -19,7 +20,7 @@
 * [ ] 资源批量操作
 * [ ] 设置存储空间访问权限
 
-#### Build Setup
+### Build Setup
 
 ``` bash
 # install dependencies
@@ -31,3 +32,5 @@ yarn run dev
 # build electron application for production
 yarn run build
 ```
+
+PS. You can use [`cnpm`](https://npm.taobao.org/) to download modules faster.
