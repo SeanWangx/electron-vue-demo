@@ -22,6 +22,7 @@
     </div>
     <div class="table-container">
       <el-table
+        size="small"
         max-height="622"
         style="100%;"
         :header-cell-style="{'background': '#f5f7fa'}"
