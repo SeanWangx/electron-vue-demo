@@ -179,7 +179,7 @@ export default {
   },
   activated () {
     if (this.refresh) {
-      this.fetchList()
+      this.fetchList(this.prefix)
     }
   },
   methods: {

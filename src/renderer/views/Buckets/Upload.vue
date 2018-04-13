@@ -66,6 +66,10 @@ export default {
     zone: {
       type: String,
       required: true
+    },
+    domains: {
+      type: Array,
+      required: true
     }
   },
   data () {
@@ -87,8 +91,8 @@ export default {
   },
   deactivated () {
     this.refresh = false
-    this.ctype = 0
-    this.prefix = ''
+    // this.ctype = 0
+    // this.prefix = ''
     this.uploadData = {}
     this.$refs['upload'].clearFiles()
   },
@@ -120,10 +124,13 @@ export default {
       this.$set(this.uploadData, 'token', uploadToken)
     },
     handlePreview (file) {
-      console.log(file)
+      let key = file.response.key
+      if (!!key && this.domains && this.domains[0]) {
+        shell.openExternal(`http://${this.domains[0]}/${key}`)
+      }
     },
     handleSuccess (...args) {
-      console.log(args)
+      // console.log(args)
       this.refresh = true
       this.$message.success({
         message: '上传文件成功！',
@@ -131,11 +138,17 @@ export default {
       })
     },
     handleError (...args) {
-      console.log(args)
+      // console.log(args)
       this.$message.error({
         message: '上传文件失败！',
         center: true
       })
+    }
+  },
+  watch: {
+    bucket (newVal) {
+      this.ctype = 0
+      this.prefix = ''
     }
   }
 }
