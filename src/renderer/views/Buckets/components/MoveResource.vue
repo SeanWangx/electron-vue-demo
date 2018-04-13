@@ -32,8 +32,8 @@
       </el-form-item>
     </el-form>
     <div slot="footer">
-      <el-button size="mini" @click="cancel">取 消</el-button>
       <el-button size="mini" type="primary" @click="confirm">确 定</el-button>
+      <el-button size="mini" @click="cancel">取 消</el-button>
     </div>
   </el-dialog>
 </template>
