@@ -88,8 +88,7 @@ export default {
       shell.openExternal('https://developer.qiniu.com/sdk#official-tool')
     },
     beforeUpload (file) {
-      console.log(file)
-      if (file.size > 1024 * 1024 * 500) {
+      if (file.size && (file.size > 1024 * 1024 * 500)) {
         this.$message.error({
           message: '文件大小超出尺寸，上传失败！',
           center: true
