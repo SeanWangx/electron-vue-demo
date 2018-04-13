@@ -191,7 +191,8 @@ export default {
     }),
     async fetchList (prefix = '') {
       try {
-        await this._fetchList(objectEmptyFilter({ bucket: this.bucket, prefix }))
+        this.prefix = prefix
+        await this._fetchList(objectEmptyFilter({ bucket: this.bucket, prefix: this.prefix }))
       } catch (e) {
         console.warn(e)
       }
@@ -206,7 +207,7 @@ export default {
           key,
           bucket: this.bucket
         })
-        await this.fetchList()
+        await this.fetchList(this.prefix)
         this.$message.success({
           message: `删除资源【${key}】成功！`,
           center: true
@@ -219,7 +220,7 @@ export default {
       try {
         const { bucketSrc, bucketDest, keySrc, keyDest } = payload
         await this._moveBucketResource({ bucketSrc, bucketDest, keySrc, keyDest })
-        await this.fetchList()
+        await this.fetchList(this.prefix)
         this.$message.success({
           message: '资源文件移动成功！',
           center: true
@@ -240,7 +241,7 @@ export default {
           bucket: this.bucket,
           type: 0 - type + 1
         })
-        await this.fetchList()
+        await this.fetchList(this.prefix)
         this.$message.success({
           message: '修改存储方式成功！',
           center: true
