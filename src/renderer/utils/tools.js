@@ -115,6 +115,31 @@ export const objectEmptyFilter = obj => {
 }
 
 /**
+ * 资源大小计算
+ * @param {*} size 资源大小
+ */
+export const sizeCalculation = (size = 0) => {
+  const _obj = {
+    size,
+    unit: 'B'
+  }
+  if (_obj.size > 1024 * 1024 * 1024) {
+    _obj.unit = 'GB'
+    _obj.size = _obj.size / (1024 * 1024 * 1024)
+  } else if (_obj.size > 1024 * 1024) {
+    _obj.unit = 'MB'
+    _obj.size = _obj.size / (1024 * 1024)
+  } else if (_obj.size > 1024) {
+    _obj.unit = 'KB'
+    _obj.size = _obj.size / 1024
+  }
+  return {
+    size: parseFloat(_obj.size).toFixed(2),
+    unit: _obj.unit
+  }
+}
+
+/**
  * 安全转换base64
  * @param {*} v 字符串
  */

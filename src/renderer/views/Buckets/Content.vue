@@ -4,7 +4,7 @@
       <el-button size="small" @click="() => $emit('change', { view: 'VUpload' })">上传<i class="el-icon-upload el-icon--right"></i></el-button>
       <el-button size="small" @click="() => fetchList()">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
       <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resourceListCount }} 个文件</span>
-      <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resourceListFSize }} KB存储量</span>
+      <span style="margin: 0 0 0 10px;font-size: 12px;">共{{ resourceListFSize }}存储量</span>
       <el-input clearable size="small"
         v-model="prefix"
         prefix-icon="el-icon-search"
@@ -49,7 +49,7 @@
           prop="fsize"
           label="文件大小">
           <template slot-scope="scope">
-            <span>{{ parseFloat(scope.row['fsize'] / 1024).toFixed(2) }} KB</span>
+            <span>{{  scope.row['fsize'] |fsizeConvert }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -79,7 +79,7 @@
                 <div class="file-info">
                   <p>
                     <span class="info-title">文件大小:</span>
-                    <span class="info-text">{{ parseFloat(previewInfo['fsize'] / 1024).toFixed(2) }} KB</span>
+                    <span class="info-text">{{ previewInfo['fsize'] | fsizeConvert }}</span>
                   </p>
                   <p>
                     <span class="info-title">最后更新:</span>
@@ -123,7 +123,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { objectEmptyFilter } from '@/utils/tools'
+import { objectEmptyFilter, sizeCalculation } from '@/utils/tools'
 import { clipboard, shell } from 'electron'
 import VMoveResource from './components/MoveResource'
 const { dialog } = require('electron').remote
@@ -157,7 +157,8 @@ export default {
     }),
     resourceListFSize () {
       let fsize = this.resourceListData.reduce((acc, cur) => acc + (cur['fsize'] || 0), 0)
-      return parseFloat(fsize / 1024).toFixed(2)
+      let fsizeObj = sizeCalculation(fsize)
+      return ` ${fsizeObj.size} ${fsizeObj.unit}`
     },
     bucketSelected () {
       return this.buckets.filter(item => item['name'] === this.bucket)[0] || {}
@@ -313,6 +314,10 @@ export default {
     }
   },
   filters: {
+    fsizeConvert (val) {
+      let fsizeObj = sizeCalculation(val)
+      return `${fsizeObj.size} ${fsizeObj.unit}`
+    },
     dateFormat (val) {
       if (!!val === false) {
         return ''
