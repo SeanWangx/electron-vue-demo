@@ -1,6 +1,8 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain } from 'electron'
+import request from 'request'
+import fs from 'fs'
 
 /**
  * Set `__static` path to static files in production
@@ -50,6 +52,23 @@ function createWindow () {
       mainWindow.center()
     }
     event.sender.send(`SET_CLIENT_VALID_SUCCESS_${uuid}`)
+  })
+  // download file
+  ipcMain.on('DOWNLOAD_FILE', (evt, payload) => {
+    const { data, uuid } = payload
+    const { filePath, fileURI } = data
+    let stream = fs.createWriteStream(filePath)
+    request(fileURI).on('error', (err) => {
+      evt.sender.send(`DOWNLOAD_FILE_REPLY_${uuid}`, {
+        fn: 'error',
+        message: filePath
+      })
+    }).pipe(stream).on('close', () => {
+      evt.sender.send(`DOWNLOAD_FILE_REPLY_${uuid}`, {
+        fn: 'success',
+        message: filePath
+      })
+    })
   })
 }
 

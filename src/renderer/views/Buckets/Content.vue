@@ -124,7 +124,8 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { objectEmptyFilter, sizeCalculation } from '@/utils/tools'
-import { clipboard, shell } from 'electron'
+import { clipboard, shell, ipcRenderer } from 'electron'
+import uuidv1 from 'uuid/v1'
 import VMoveResource from './components/MoveResource'
 
 const { dialog } = require('electron').remote
@@ -252,12 +253,29 @@ export default {
       }
     },
     downloadFile (key) {
-      let fileSavePath = dialog.showSaveDialog({
+      let filePath = dialog.showSaveDialog({
         defaultPath: key
       })
-      let fileGetURI = `http://${this.domain}/${key}`
-      if (fileSavePath) {
-        console.log(fileGetURI, fileSavePath)
+      let fileURI = `http://${this.domain}/${key}`
+      if (filePath) {
+        let uuid = uuidv1()
+        let payload = {
+          uuid,
+          data: { filePath, fileURI }
+        }
+        ipcRenderer.once(`DOWNLOAD_FILE_REPLY_${uuid}`, (evt, res) => {
+          const { fn = 'error', message = '——' } = res || {}
+          this.$message[fn]({
+            message: `下载${fn === 'success' ? '成功' : '失败'}【${message}】！`,
+            center: true
+          })
+        })
+        ipcRenderer.send('DOWNLOAD_FILE', payload)
+      } else {
+        this.$message.error({
+          message: '信息缺失，无法下载！',
+          center: true
+        })
       }
     },
     copyLink (key) {
