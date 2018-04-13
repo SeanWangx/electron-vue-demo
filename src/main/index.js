@@ -55,16 +55,17 @@ function createWindow () {
   })
   // download file
   ipcMain.on('DOWNLOAD_FILE', (evt, payload) => {
-    const { data, uuid } = payload
-    const { filePath, fileURI } = data
+    const { filePath, fileURI } = payload
     let stream = fs.createWriteStream(filePath)
     request(fileURI).on('error', (err) => {
-      evt.sender.send(`DOWNLOAD_FILE_REPLY_${uuid}`, {
+      console.log('err', err)
+      evt.sender.send('DOWNLOAD_FILE_REPLY', {
         fn: 'error',
         message: filePath
       })
     }).pipe(stream).on('close', () => {
-      evt.sender.send(`DOWNLOAD_FILE_REPLY_${uuid}`, {
+      console.log('success')
+      evt.sender.send('DOWNLOAD_FILE_REPLY', {
         fn: 'success',
         message: filePath
       })

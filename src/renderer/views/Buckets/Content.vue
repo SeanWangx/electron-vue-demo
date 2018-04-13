@@ -125,7 +125,6 @@
 import { mapActions, mapGetters } from 'vuex'
 import { objectEmptyFilter, sizeCalculation } from '@/utils/tools'
 import { clipboard, shell, ipcRenderer } from 'electron'
-import uuidv1 from 'uuid/v1'
 import VMoveResource from './components/MoveResource'
 
 const { dialog } = require('electron').remote
@@ -173,6 +172,14 @@ export default {
     }
   },
   mounted () {
+    ipcRenderer.on('DOWNLOAD_FILE_REPLY', (evt, res) => {
+      const { fn = 'error', message = '——' } = res || {}
+      this.$message[fn]({
+        message: `下载${fn === 'success' ? '成功' : '失败'}【${message}】！`,
+        center: true,
+        duration: 5000
+      })
+    })
     this.$nextTick(() => {
       if (!!this.bucket === true) {
         this.domain = this.domains[0] || ''
@@ -258,20 +265,7 @@ export default {
       })
       let fileURI = `http://${this.domain}/${key}`
       if (filePath) {
-        let uuid = uuidv1()
-        let payload = {
-          uuid,
-          data: { filePath, fileURI }
-        }
-        ipcRenderer.once(`DOWNLOAD_FILE_REPLY_${uuid}`, (evt, res) => {
-          const { fn = 'error', message = '——' } = res || {}
-          this.$message[fn]({
-            message: `下载${fn === 'success' ? '成功' : '失败'}【${message}】！`,
-            center: true,
-            duration: 5000
-          })
-        })
-        ipcRenderer.send('DOWNLOAD_FILE', payload)
+        ipcRenderer.send('DOWNLOAD_FILE', { filePath, fileURI })
       } else {
         this.$message.error({
           message: '信息缺失，无法下载！',
