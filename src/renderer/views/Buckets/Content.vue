@@ -93,7 +93,7 @@
                   </p>
                 </div>
                 <div class="file-operator">
-                  <el-button size="mini" @click="() => {}" round>下载文件</el-button>
+                  <el-button size="mini" @click="() => downloadFile(scope.row['key'])" round>下载文件</el-button>
                   <el-button size="mini" @click="() => copyLink(scope.row['key'])" round>复制外链</el-button>
                 </div>
               </div>
@@ -102,7 +102,7 @@
             <el-dropdown trigger="click" @command="handleCommand">
               <el-button type="text" size="small" icon="el-icon-more"></el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item :command="{type: 'download'}">下载文件</el-dropdown-item>
+                <el-dropdown-item :command="{type: 'download', key: scope.row['key']}">下载文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'move', key: scope.row['key']}">移动文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'delete', key: scope.row['key']}">删除文件</el-dropdown-item>
                 <el-dropdown-item :command="{type: 'copy', key: scope.row['key']}">复制外链</el-dropdown-item>
@@ -126,6 +126,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { objectEmptyFilter, sizeCalculation } from '@/utils/tools'
 import { clipboard, shell } from 'electron'
 import VMoveResource from './components/MoveResource'
+
 const { dialog } = require('electron').remote
 
 export default {
@@ -250,13 +251,13 @@ export default {
         console.warn(e)
       }
     },
-    downloadFile () {
-      let pathArr = dialog.showOpenDialog({
-        properties: ['openDirectory', 'createDirectory']
+    downloadFile (key) {
+      let fileSavePath = dialog.showSaveDialog({
+        defaultPath: key
       })
-      if (!!pathArr && pathArr[0]) {
-        this.downloadPath = pathArr[0]
-        console.log(`download path: ${pathArr[0]}`)
+      let fileGetURI = `http://${this.domain}/${key}`
+      if (fileSavePath) {
+        console.log(fileGetURI, fileSavePath)
       }
     },
     copyLink (key) {
@@ -278,7 +279,7 @@ export default {
     handleCommand (command) {
       if (command['type'] === 'download') {
         // 下载文件
-        this.downloadFile()
+        this.downloadFile(command['key'])
       } else if (command['type'] === 'copy') {
         // 复制外链
         this.copyLink(command['key'])
