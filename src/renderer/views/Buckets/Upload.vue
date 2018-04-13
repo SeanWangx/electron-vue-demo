@@ -20,13 +20,23 @@
         <div slot="tip" class="el-upload__tip">网页不能上传超过 500M 的文件，大文件请<span @click="toTip" class="upload-tip"> 使用工具 </span>上传</div>
       </el-upload>
       <div class="upload-config">
-        <div class="upload-ctype">
+        <div class="upload-config-item">
           <div>选择上传文件存储类型:</div>
           <div>
             <el-radio-group v-model="ctype" size="small">
               <el-radio :label="0" border>标准存储</el-radio>
               <el-radio :label="1" border>低频存储</el-radio>
             </el-radio-group>
+          </div>
+        </div>
+        <div class="upload-config-item">
+          <div>设置路径前缀:</div>
+          <div>
+            <p>路径前缀可以用来分类文件，例如：</p>
+            <p><span style="display: inline-block;height: 22px;color: #fff;background: #8f9bb4;">image/jpg/</span>your-file-name.jpg</p>
+          </div>
+          <div style="width: 250px;">
+            <el-input v-model="prefix" placeholder="不设置默认为空" size="small"></el-input>
           </div>
         </div>
       </div>
@@ -62,6 +72,7 @@ export default {
     return {
       refresh: false,
       ctype: 0,
+      prefix: '',
       uploadData: {}
     }
   },
@@ -77,6 +88,7 @@ export default {
   deactivated () {
     this.refresh = false
     this.ctype = 0
+    this.prefix = ''
     this.uploadData = {}
     this.$refs['upload'].clearFiles()
   },
@@ -100,11 +112,11 @@ export default {
         secretKey: this.secretKey
       }
       const options = {
-        scope: `${this.bucket}:${file.name}`,
+        scope: `${this.bucket}:${this.prefix + file.name}`,
         fileType: this.ctype
       }
       let uploadToken = getUploadToken(mac, options)
-      this.$set(this.uploadData, 'key', file.name)
+      this.$set(this.uploadData, 'key', this.prefix + file.name)
       this.$set(this.uploadData, 'token', uploadToken)
     },
     handlePreview (file) {
@@ -124,9 +136,6 @@ export default {
         message: '上传文件失败！',
         center: true
       })
-    },
-    test () {
-      console.log(this.bucket, this.uploadURL)
     }
   }
 }
@@ -185,11 +194,18 @@ export default {
     position: relative;
     box-sizing: border-box;
 }
-.upload-ctype {
+.upload-config-item {
     font-size: 14px;
 }
-.upload-ctype > div {
+.upload-config-item > div {
     margin: 0 0 20px 0;
+}
+.upload-config-item > div > p {
+    margin: 0;
+    font-size: 14px;
+    color: #666f80;
+    height: 22px;
+    line-height: 22px;
 }
 .upload-tip {
     cursor: pointer;
