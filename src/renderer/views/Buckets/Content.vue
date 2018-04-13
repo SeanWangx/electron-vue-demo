@@ -267,7 +267,8 @@ export default {
           const { fn = 'error', message = '——' } = res || {}
           this.$message[fn]({
             message: `下载${fn === 'success' ? '成功' : '失败'}【${message}】！`,
-            center: true
+            center: true,
+            duration: 5000
           })
         })
         ipcRenderer.send('DOWNLOAD_FILE', payload)
