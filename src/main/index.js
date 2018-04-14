@@ -60,13 +60,11 @@ function createWindow () {
     const { filePath, fileURI } = payload
     let stream = fs.createWriteStream(filePath)
     request(fileURI).on('error', (err) => {
-      console.log('err', err)
       evt.sender.send('DOWNLOAD_FILE_REPLY', {
         fn: 'error',
         message: filePath
       })
     }).pipe(stream).on('close', () => {
-      console.log('success')
       evt.sender.send('DOWNLOAD_FILE_REPLY', {
         fn: 'success',
         message: filePath
