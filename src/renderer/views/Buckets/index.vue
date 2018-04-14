@@ -16,7 +16,7 @@
           <el-button @click.stop="() => delBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
         </el-menu-item>
       </el-menu>
-      <div class="add-bucket">
+      <div class="item-common">
         <el-button @click="addBucket" style="font-weight: 200;color: #fff;" type="text" icon="el-icon-circle-plus">新增</el-button>
       </div>
       <v-add-bucket
@@ -56,6 +56,8 @@ export default {
       needRefresh: false,
       view: 'VContent',
 
+      filter: '',
+
       bucket: '',
       domains: [],
       zone: '',
@@ -65,8 +67,13 @@ export default {
   },
   computed: {
     ...mapGetters({
-      buckets: 'buckets'
-    })
+      _buckets: 'buckets'
+    }),
+    buckets () {
+      return this._buckets.filter(item => {
+        return this.filter === '' || item['name'].indexOf(this.filter) !== -1
+      })
+    }
   },
   beforeMount () {
     this.fetchBuckets()
@@ -203,7 +210,7 @@ export default {
     border: none;
     color: inherit;
 }
-.add-bucket {
+.item-common {
     display: block;
     width: 100%;
     height: 48px;
