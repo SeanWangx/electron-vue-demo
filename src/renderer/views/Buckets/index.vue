@@ -35,12 +35,7 @@
         @change="handleViewChange"></component>
     </keep-alive>
 
-    <!-- <v-content v-if="bucket"
-      :bucket="bucket"
-      :domains="domains"
-      :zone="zone"></v-content> -->
-
-    <el-main v-if="bucket === ''" class="flex-container">
+    <el-main v-if="bucket === ''" v-loading="loading" class="flex-container">
       <div style="flex: 1;text-align: center;">请选择或者<el-button style="margin: 0 4px;" type="primary" size="mini" @click="addBucket">新建</el-button>存储空间</div>
     </el-main>
   </el-container>
@@ -55,6 +50,8 @@ import VUpload from './Upload'
 export default {
   data () {
     return {
+      loading: true,
+
       needRefresh: false,
       view: 'VContent',
 
@@ -108,11 +105,16 @@ export default {
       })
     },
     async fetchBuckets () {
+      this.loading = true
       try {
         await this._fetchBuckets({})
         this.defaultClick(this.bucket)
       } catch (e) {
         console.warn(e)
+      } finally {
+        setTimeout(() => {
+          this.loading = false
+        }, 2000)
       }
     },
     async selectBucket (bucketObj) {
