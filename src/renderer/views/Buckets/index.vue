@@ -27,6 +27,7 @@
 
     <keep-alive>
       <component v-if="bucket !== ''"
+        :loading="loading"
         :is="view"
         :bucket="bucket"
         :domains="domains"
@@ -79,6 +80,11 @@ export default {
       _fetchBucketDomain: 'FETCH_BUCKET_DOMAIN',
       _fetchBucketZone: 'FETCH_BUCKET_ZONE'
     }),
+    setLoading (loading = false, time = 2000) {
+      setTimeout(() => {
+        this.loading = loading
+      }, loading ? 0 : time)
+    },
     handleViewChange (v = {}) {
       const { view = 'VContent', refresh = false } = v
       this.needRefresh = refresh
@@ -105,19 +111,18 @@ export default {
       })
     },
     async fetchBuckets () {
-      this.loading = true
+      this.setLoading(true)
       try {
         await this._fetchBuckets({})
         this.defaultClick(this.bucket)
       } catch (e) {
         console.warn(e)
       } finally {
-        setTimeout(() => {
-          this.loading = false
-        }, 2000)
+        await this.setLoading(false, 2000)
       }
     },
     async selectBucket (bucketObj) {
+      this.setLoading(true)
       this.view = 'VContent'
       this.needRefresh = false
       this.domains = bucketObj['domains'] || []
@@ -136,6 +141,7 @@ export default {
       } catch (e) {
         console.warn(e)
       } finally {
+        await this.setLoading(false, 500)
         this.bucket = bucketObj['name']
       }
     },

@@ -1,5 +1,5 @@
 <template>
-  <el-main style="font-size: 0;height: 100%;position: relative;">
+  <el-main style="font-size: 0;height: 100%;position: relative;" v-loading="loading">
     <div style="margin-bottom: 10px;position: relative;height: 32px;">
       <el-button size="small" @click="() => $emit('change', { view: 'VUpload' })">上传<i class="el-icon-upload el-icon--right"></i></el-button>
       <el-button size="small" @click="() => fetchList()">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
@@ -136,6 +136,10 @@ export default {
       required: true
     },
     refresh: {
+      type: Boolean,
+      default: false
+    },
+    loading: {
       type: Boolean,
       default: false
     }
