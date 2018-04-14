@@ -45,10 +45,12 @@ function createWindow () {
     if (valid) {
       mainWindow.setMinimumSize(1024, 768)
       mainWindow.setSize(1024, 768)
+      mainWindow.setResizable(true)
       mainWindow.center()
     } else {
       mainWindow.setMinimumSize(540, 600)
       mainWindow.setSize(540, 600)
+      mainWindow.setResizable(false)
       mainWindow.center()
     }
     event.sender.send(`SET_CLIENT_VALID_SUCCESS_${uuid}`)
