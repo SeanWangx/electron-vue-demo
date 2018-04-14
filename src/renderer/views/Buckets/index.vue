@@ -31,9 +31,24 @@
           <span slot="title">{{ item.name }}</span>
           <el-button @click.stop="() => delBucket(item.name)" type="text" size="small" class="del-bucket" icon="el-icon-circle-close"></el-button>
         </el-menu-item>
+        <div class="item-common" style="background: #545c64;border: none;">
+          <el-button
+            @click="addBucket"
+            round
+            type="info"
+            size="mini"
+            icon="el-icon-plus"
+            style="font-weight: 200;padding: 7px;background: #545c64;">
+          </el-button>
+        </div>
       </el-menu>
       <div class="item-common">
-        <el-button @click="addBucket" style="font-weight: 200;color: #fff;" type="text" icon="el-icon-circle-plus">新增</el-button>
+        <!-- <el-button
+          @click="() => {}"
+          style="font-weight: 200;color: #fff;"
+          type="text"
+          size="large"
+          icon="el-icon-setting"></el-button> -->
       </div>
       <v-add-bucket
         :visible="addBktVisible"
