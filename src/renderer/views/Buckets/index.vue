@@ -1,7 +1,23 @@
 <template>
   <el-container style="width: 100%;height: 100%;">
-    <el-aside style="width: 180px;">
+    <el-aside style="width: 200px;">
+      <!-- <div class="item-common" style="background: #545c64;">
+        <el-input
+          class="filter-bucket"
+          size="mini"
+          v-model="filter"
+          prefix-icon="el-icon-search"
+          placeholder="搜索">
+        </el-input>
+        <el-button
+          plain
+          class="add-bucket"
+          icon="el-icon-plus"
+          size="mini">
+        </el-button>
+      </div> -->
       <el-menu
+        :default-active="active"
         background-color="#545c64"
         text-color="#fff"
         active-text-color="#ffd04b"
@@ -51,17 +67,13 @@ import VUpload from './Upload'
 export default {
   data () {
     return {
-      loading: true,
-
-      needRefresh: false,
-      view: 'VContent',
-
-      filter: '',
-
-      bucket: '',
-      domains: [],
-      zone: '',
-
+      loading: true, // 加载信号
+      needRefresh: false, // 资源列表刷新标志
+      view: 'VContent', // 组件名
+      filter: '', // bucket筛选关键字
+      bucket: '', // 当前选中bucket名称
+      domains: [], // 当前选中bucket域名
+      zone: '', // 当前选中bucket的存储区域
       addBktVisible: false
     }
   },
@@ -73,6 +85,14 @@ export default {
       return this._buckets.filter(item => {
         return this.filter === '' || item['name'].indexOf(this.filter) !== -1
       })
+    },
+    active () {
+      return this.buckets.reduce((acc, cur, index) => {
+        if (acc === null) {
+          acc = cur['name'] === this.bucket ? index.toString() : acc
+        }
+        return acc
+      }, null) || ''
     }
   },
   beforeMount () {
@@ -194,6 +214,12 @@ export default {
 </script>
 
 <style scoped>
+.add-bucket {
+    padding: 7px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
 .bucket-item {
     padding-right: 30px;
     height: 48px;
@@ -220,6 +246,7 @@ export default {
     line-height: 48px;
     box-sizing: border-box;
     background: #4b4f53;
+    position: relative;
 }
 .table-container {
     display: block;
