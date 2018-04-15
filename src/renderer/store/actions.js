@@ -24,12 +24,15 @@ export default {
    * 登出
    */
   [A.LOGOUT] ({ commit }) {
-    commit(M.SET_BUCKETS, [])
-    commit(M.SET_ACCCESS_KEY, '')
-    commit(M.SET_SECRET_KEY, '')
-    commit(M.SET_RESOURCE_LIST_DATA, [])
-    commit(M.SET_RESOURCE_LIST_COUNT, 0)
-    commit(M.SET_USER_VALID, false)
+    return new Promise((resolve, reject) => {
+      commit(M.SET_USER_VALID, false)
+      commit(M.SET_BUCKETS, [])
+      commit(M.SET_ACCCESS_KEY, '')
+      commit(M.SET_SECRET_KEY, '')
+      commit(M.SET_RESOURCE_LIST_DATA, [])
+      commit(M.SET_RESOURCE_LIST_COUNT, 0)
+      resolve()
+    })
   },
   /**
    * 获取bucket列表
@@ -40,12 +43,12 @@ export default {
         accessKey: '',
         secretKey: ''
       }
-      if (payload['accessKey'] && payload['secretKey']) {
-        mac.accessKey = payload['accessKey']
-        mac.secretKey = payload['secretKey']
-      } else if (state['accessKey'] && state['secretKey']) {
+      if (!!state['accessKey'] && !!state['secretKey']) {
         mac.accessKey = state['accessKey']
         mac.secretKey = state['secretKey']
+      } else if (!!payload['accessKey'] && !!payload['secretKey']) {
+        mac.accessKey = payload['accessKey']
+        mac.secretKey = payload['secretKey']
       } else {
         reject(new Error('Missing keys'))
       }
