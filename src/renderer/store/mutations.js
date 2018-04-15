@@ -4,7 +4,7 @@ import storage from '../utils/storage'
 export default {
   [M.SET_ACCESS_KEY] (state, accessKey = '') {
     state.accessKey = accessKey
-    storage.set('accessKey', state.storage)
+    storage.set('accessKey', state.accessKey)
   },
   [M.SET_SECRET_KEY] (state, secretKey = '') {
     state.secretKey = secretKey
