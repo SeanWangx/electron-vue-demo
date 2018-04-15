@@ -62,7 +62,8 @@ function createWindow () {
     request(fileURI).on('error', (err) => {
       evt.sender.send('DOWNLOAD_FILE_REPLY', {
         fn: 'error',
-        message: filePath
+        message: filePath,
+        err
       })
     }).pipe(stream).on('close', () => {
       evt.sender.send('DOWNLOAD_FILE_REPLY', {

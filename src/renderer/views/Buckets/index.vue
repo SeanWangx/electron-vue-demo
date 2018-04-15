@@ -40,20 +40,16 @@
             icon="el-icon-plus"
             style="font-weight: 200;padding: 7px;background: #545c64;">
           </el-button>
+          <v-add-bucket
+            :visible="addBktVisible"
+            @close="addBktVisible = false"
+            @success="handleAddSuccess"></v-add-bucket>
         </div>
       </el-menu>
-      <div class="item-common">
-        <!-- <el-button
-          @click="() => {}"
-          style="font-weight: 200;color: #fff;"
-          type="text"
-          size="large"
-          icon="el-icon-setting"></el-button> -->
+      <div class="item-common"
+        style="background: #545c64;">
+        <i class="client-menu iconfont icon-menu" @click="handleSetting"></i>
       </div>
-      <v-add-bucket
-        :visible="addBktVisible"
-        @close="addBktVisible = false"
-        @success="handleAddSuccess"></v-add-bucket>
     </el-aside>
 
     <keep-alive>
@@ -131,6 +127,10 @@ export default {
       const { view = 'VContent', refresh = false } = v
       this.needRefresh = refresh
       this.view = view
+    },
+    handleSetting () {
+      // TODO
+      console.log('setting')
     },
     defaultClick (bucket) {
       this.$nextTick(() => {
@@ -260,8 +260,17 @@ export default {
     border-right: 1px solid #fff;
     line-height: 48px;
     box-sizing: border-box;
-    background: #4b4f53;
+    /* background: #4b4f53; */
+    background: #545c64;
     position: relative;
+}
+.client-menu {
+    font-size: 20px;
+    color: #ccc;
+    cursor: pointer;
+}
+.client-menu:hover {
+    color: #fff;
 }
 .table-container {
     display: block;
