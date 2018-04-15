@@ -54,6 +54,7 @@
 
     <keep-alive>
       <component
+        v-if="view !== 'VSetting'"
         :loading="loading"
         :is="view"
         :bucket="bucket"
@@ -62,6 +63,7 @@
         :refresh="needRefresh"
         @change="handleViewChange"
         @create="addBucket"></component>
+      <v-setting v-else @back="() => handleViewChange({ view: 'VContent' })"></v-setting>
     </keep-alive>
   </el-container>
 </template>
@@ -71,6 +73,7 @@ import { mapGetters, mapActions } from 'vuex'
 import VAddBucket from './components/AddBucket'
 import VContent from './Content'
 import VUpload from './Upload'
+import VSetting from './Setting'
 
 export default {
   data () {
@@ -128,8 +131,7 @@ export default {
       this.view = view
     },
     handleSetting () {
-      // TODO
-      console.log('setting')
+      this.handleViewChange({ view: 'VSetting' })
     },
     defaultClick (bucket) {
       this.$nextTick(() => {
@@ -222,6 +224,7 @@ export default {
   components: {
     VContent,
     VUpload,
+    VSetting,
     VAddBucket
   }
 }
