@@ -10,11 +10,14 @@ export default {
     return new Promise((resolve, reject) => {
       const { accessKey, secretKey } = payload
       dispatch(A.FETCH_BUCKETS, { accessKey, secretKey }).then(res => {
-        // console.log(res)
-        commit(M.SET_ACCCESS_KEY, accessKey)
-        commit(M.SET_SECRET_KEY, secretKey)
-        commit(M.SET_USER_VALID, true)
-        resolve()
+        if (!!accessKey && !!secretKey) {
+          commit(M.SET_ACCESS_KEY, accessKey)
+          commit(M.SET_SECRET_KEY, secretKey)
+          commit(M.SET_USER_VALID, true)
+          resolve()
+        } else {
+          reject(new Error('缺失秘钥'))
+        }
       }).catch(error => {
         console.error(error)
       })
@@ -27,7 +30,7 @@ export default {
     return new Promise((resolve, reject) => {
       commit(M.SET_USER_VALID, false)
       commit(M.SET_BUCKETS, [])
-      commit(M.SET_ACCCESS_KEY, '')
+      commit(M.SET_ACCESS_KEY, '')
       commit(M.SET_SECRET_KEY, '')
       commit(M.SET_RESOURCE_LIST_DATA, [])
       commit(M.SET_RESOURCE_LIST_COUNT, 0)
