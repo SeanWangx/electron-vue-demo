@@ -17,9 +17,9 @@
 ### Preview
 
 <div align="center">
-  <img src="http://p77m9afj9.bkt.clouddn.com/tiny/cover.png" width="720" height="450" alt="cover" align=center />
+  <img src="http://p77m9afj9.bkt.clouddn.com/tiny/list.png" width="720" height="450" alt="list" align=center />
 </div>
-
+<br />
 <div align="center">
   <img src="http://p77m9afj9.bkt.clouddn.com/tiny/upload.png" width="720" height="450" alt="upload" align=center />
 </div>
