@@ -1,123 +1,129 @@
 <template>
-  <el-main style="font-size: 0;height: 100%;position: relative;" v-loading="loading">
-    <div style="margin-bottom: 10px;position: relative;height: 32px;">
-      <el-button size="small" @click="() => $emit('change', { view: 'VUpload' })">上传<i class="el-icon-upload el-icon--right"></i></el-button>
-      <el-button size="small" @click="() => fetchList()">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
-      <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resourceListCount }} 个文件</span>
-      <span style="margin: 0 0 0 10px;font-size: 12px;">共{{ resourceListFSize }}存储量</span>
-      <el-input clearable size="small"
-        v-model="prefix"
-        prefix-icon="el-icon-search"
-        style="width: 200px;position: absolute;right: 0;"
-        placeholder="请输入文件前缀搜索"
-        @change="v => fetchList(v)"></el-input>
-    </div>
-    <div style="margin-bottom: 10px;position: relative;height: 32px;">
-      <span style="font-size: 14px;">外链默认域名</span>
-      <el-select size="small" v-model="domain" style="width: 230px;vertical-align: top;margin: 0 10px;">
-        <el-option v-for="(item, index) in domains" :key="index"
-          :label="item" :value="item">{{ item }}</el-option>
-      </el-select>
-      <el-button class="btn-copy" size="small" @click="() => {}">保存默认域名</el-button>
-    </div>
-    <div class="table-container">
-      <el-table
-        size="small"
-        max-height="622"
-        style="100%;"
-        :header-cell-style="{'background': '#f5f7fa'}"
-        :data="resourceListData">
-        <el-table-column
-          sortable
-          prop="key"
-          label="文件名"></el-table-column>
-        <el-table-column
-          sortable
-          prop="mimeType"
-          label="文件类型"></el-table-column>
-        <el-table-column
-          sortable
-          prop="type"
-          label="存储类型">
-          <template slot-scope="scope">
-            <span v-if="scope.row['type'] === 0">标准存储</span>
-            <span v-if="scope.row['type'] === 1">低频存储</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          sortable
-          prop="fsize"
-          label="文件大小">
-          <template slot-scope="scope">
-            <span>{{  scope.row['fsize'] |fsizeConvert }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          sortable
-          prop="putTime"
-          label="最近更新时间">
-          <template slot-scope="scope">
-            <span>{{ parseInt(scope.row['putTime'] / 10000) | dateFormat }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          align="center"
-          label="操作">
-          <template slot-scope="scope">
-            <el-popover
-              placement="left"
-              width="300"
-              trigger="click">
-              <el-button slot="reference" type="text" size="small" icon="el-icon-view" @click="() => previewImg(scope.row)"></el-button>
-              <div class="file-container">
-                <div class="file-title">{{ previewInfo['key'] }}</div>
-                <div class="file-preview">
-                  <img :src="previewInfo['src']">
-                  <i v-show="previewInfo['src'] === ''" class="el-icon-loading"></i>
-                </div>
-                <div class="file-info">
-                  <p>
-                    <span class="info-title">文件大小:</span>
-                    <span class="info-text">{{ previewInfo['fsize'] | fsizeConvert }}</span>
-                  </p>
-                  <p>
-                    <span class="info-title">最后更新:</span>
-                    <span class="info-text">{{ parseInt(previewInfo['putTime'] / 10000) | dateFormat }}</span>
-                  </p>
-                  <p>
-                    <span class="info-title">外链地址:</span>
-                    <span class="info-text">
-                      <a @click="() => toFileLink(previewInfo['key'])">{{ `http://${domain}/${previewInfo['key']}` }}</a>
-                    </span>
-                  </p>
-                </div>
-                <div class="file-operator">
-                  <el-button size="mini" @click="() => downloadFile(scope.row['key'])" round>下载文件</el-button>
-                  <el-button size="mini" @click="() => copyLink(scope.row['key'])" round>复制外链</el-button>
-                </div>
-              </div>
-            </el-popover>
+  <el-main class="content-container flex-container" v-loading="loading">
 
-            <el-dropdown trigger="click" @command="handleCommand">
-              <el-button type="text" size="small" icon="el-icon-more"></el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item :command="{type: 'download', key: scope.row['key']}">下载文件</el-dropdown-item>
-                <el-dropdown-item :command="{type: 'move', key: scope.row['key']}">移动文件</el-dropdown-item>
-                <el-dropdown-item :command="{type: 'delete', key: scope.row['key']}">删除文件</el-dropdown-item>
-                <el-dropdown-item :command="{type: 'copy', key: scope.row['key']}">复制外链</el-dropdown-item>
-                <el-dropdown-item :command="{type: 'ctype', key: scope.row['key'], ctype: scope.row['type']}">{{ `转${scope.row['type'] === 0 ? '低频' : '标准'}存储` }}</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
+    <div v-if="bucket !== ''" class="has-bucket">
+      <div style="margin-bottom: 10px;position: relative;height: 32px;">
+        <el-button size="small" @click="() => $emit('change', { view: 'VUpload' })">上传<i class="el-icon-upload el-icon--right"></i></el-button>
+        <el-button size="small" @click="() => fetchList()">刷新<i class="el-icon-refresh el-icon--right"></i></el-button>
+        <span style="margin: 0 0 0 10px;font-size: 12px;">共 {{ resourceListCount }} 个文件</span>
+        <span style="margin: 0 0 0 10px;font-size: 12px;">共{{ resourceListFSize }}存储量</span>
+        <el-input clearable size="small"
+          v-model="prefix"
+          prefix-icon="el-icon-search"
+          style="width: 200px;position: absolute;right: 0;"
+          placeholder="请输入文件前缀搜索"
+          @change="v => fetchList(v)"></el-input>
+      </div>
+      <div style="margin-bottom: 10px;position: relative;height: 32px;">
+        <span style="font-size: 14px;">外链默认域名</span>
+        <el-select size="small" v-model="domain" style="width: 230px;vertical-align: top;margin: 0 10px;">
+          <el-option v-for="(item, index) in domains" :key="index"
+            :label="item" :value="item">{{ item }}</el-option>
+        </el-select>
+        <el-button class="btn-copy" size="small" @click="() => {}">保存默认域名</el-button>
+      </div>
+      <div class="table-container">
+        <el-table
+          size="small"
+          max-height="622"
+          style="100%;"
+          :header-cell-style="{'background': '#f5f7fa'}"
+          :data="resourceListData">
+          <el-table-column
+            sortable
+            prop="key"
+            label="文件名"></el-table-column>
+          <el-table-column
+            sortable
+            prop="mimeType"
+            label="文件类型"></el-table-column>
+          <el-table-column
+            sortable
+            prop="type"
+            label="存储类型">
+            <template slot-scope="scope">
+              <span v-if="scope.row['type'] === 0">标准存储</span>
+              <span v-if="scope.row['type'] === 1">低频存储</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            sortable
+            prop="fsize"
+            label="文件大小">
+            <template slot-scope="scope">
+              <span>{{  scope.row['fsize'] |fsizeConvert }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            sortable
+            prop="putTime"
+            label="最近更新时间">
+            <template slot-scope="scope">
+              <span>{{ parseInt(scope.row['putTime'] / 10000) | dateFormat }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed="right"
+            align="center"
+            label="操作">
+            <template slot-scope="scope">
+              <el-popover
+                placement="left"
+                width="300"
+                trigger="click">
+                <el-button slot="reference" type="text" size="small" icon="el-icon-view" @click="() => previewImg(scope.row)"></el-button>
+                <div class="file-container">
+                  <div class="file-title">{{ previewInfo['key'] }}</div>
+                  <div class="file-preview">
+                    <img :src="previewInfo['src']">
+                    <i v-show="previewInfo['src'] === ''" class="el-icon-loading"></i>
+                  </div>
+                  <div class="file-info">
+                    <p>
+                      <span class="info-title">文件大小:</span>
+                      <span class="info-text">{{ previewInfo['fsize'] | fsizeConvert }}</span>
+                    </p>
+                    <p>
+                      <span class="info-title">最后更新:</span>
+                      <span class="info-text">{{ parseInt(previewInfo['putTime'] / 10000) | dateFormat }}</span>
+                    </p>
+                    <p>
+                      <span class="info-title">外链地址:</span>
+                      <span class="info-text">
+                        <a @click="() => toFileLink(previewInfo['key'])">{{ `http://${domain}/${previewInfo['key']}` }}</a>
+                      </span>
+                    </p>
+                  </div>
+                  <div class="file-operator">
+                    <el-button size="mini" @click="() => downloadFile(scope.row['key'])" round>下载文件</el-button>
+                    <el-button size="mini" @click="() => copyLink(scope.row['key'])" round>复制外链</el-button>
+                  </div>
+                </div>
+              </el-popover>
+
+              <el-dropdown trigger="click" @command="handleCommand">
+                <el-button type="text" size="small" icon="el-icon-more"></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item :command="{type: 'download', key: scope.row['key']}">下载文件</el-dropdown-item>
+                  <el-dropdown-item :command="{type: 'move', key: scope.row['key']}">移动文件</el-dropdown-item>
+                  <el-dropdown-item :command="{type: 'delete', key: scope.row['key']}">删除文件</el-dropdown-item>
+                  <el-dropdown-item :command="{type: 'copy', key: scope.row['key']}">复制外链</el-dropdown-item>
+                  <el-dropdown-item :command="{type: 'ctype', key: scope.row['key'], ctype: scope.row['type']}">{{ `转${scope.row['type'] === 0 ? '低频' : '标准'}存储` }}</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </el-table>
+        <v-move-resource
+          :visible="moveResourceVisible"
+          :config="moveResourceConfig"
+          @close="moveResourceVisible = false"
+          @success="moveBucketResource"></v-move-resource>
+      </div>
     </div>
-    <v-move-resource
-      :visible="moveResourceVisible"
-      :config="moveResourceConfig"
-      @close="moveResourceVisible = false"
-      @success="moveBucketResource"></v-move-resource>
+    <div v-if="bucket === ''" class="no-bucket">
+      <span>请选择或者<el-button style="margin: 0 4px;" type="primary" size="mini" @click="$emit('create')">新建</el-button>存储空间</span>
+    </div>
   </el-main>
 </template>
 
@@ -359,6 +365,26 @@ export default {
 </script>
 
 <style scoped>
+.content-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    font-size: 0;
+}
+.has-bucket {
+    flex: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+.no-bucket {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+}
 .table-container {
     display: block;
     width: 100%;

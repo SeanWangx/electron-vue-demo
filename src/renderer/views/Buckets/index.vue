@@ -53,19 +53,16 @@
     </el-aside>
 
     <keep-alive>
-      <component v-if="bucket !== ''"
+      <component
         :loading="loading"
         :is="view"
         :bucket="bucket"
         :domains="domains"
         :zone="zone"
         :refresh="needRefresh"
-        @change="handleViewChange"></component>
+        @change="handleViewChange"
+        @create="addBucket"></component>
     </keep-alive>
-
-    <el-main v-if="bucket === ''" v-loading="loading" class="flex-container">
-      <div style="flex: 1;text-align: center;">请选择或者<el-button style="margin: 0 4px;" type="primary" size="mini" @click="addBucket">新建</el-button>存储空间</div>
-    </el-main>
   </el-container>
 </template>
 
@@ -120,7 +117,9 @@ export default {
     }),
     setLoading (loading = false, time = 2000) {
       setTimeout(() => {
-        this.loading = loading
+        this.$nextTick(() => {
+          this.loading = loading
+        })
       }, loading ? 0 : time)
     },
     handleViewChange (v = {}) {
@@ -183,8 +182,8 @@ export default {
       } catch (e) {
         console.warn(e)
       } finally {
-        await this.setLoading(false, 500)
         this.bucket = bucketObj['name']
+        await this.setLoading(false, 500)
       }
     },
     addBucket () {
