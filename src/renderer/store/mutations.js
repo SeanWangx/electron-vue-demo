@@ -43,5 +43,9 @@ export default {
   },
   [M.SET_RESOURCE_LIST_COUNT] (state, resourceListCount = 0) {
     state.resourceListCount = resourceListCount
+  },
+  [M.SET_DOWNLOAD_PATH] (state, downloadPath = '') {
+    state.downloadPath = downloadPath
+    storage.set('downloadPath', state.downloadPath)
   }
 }

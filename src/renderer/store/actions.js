@@ -343,5 +343,19 @@ export default {
         reject(new Error('缺失秘钥'))
       }
     })
+  },
+  /**
+   * 修改默认下载路径
+   */
+  [A.CHANGE_DOWNLOAD_PATH] ({ commit }, payload) {
+    return new Promise((resolve, reject) => {
+      const { downloadPath } = payload
+      if (!!downloadPath === true || downloadPath === '') {
+        commit(M.SET_DOWNLOAD_PATH, downloadPath || '')
+        resolve()
+      } else {
+        reject(new Error('error download path'))
+      }
+    })
   }
 }

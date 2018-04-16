@@ -6,5 +6,6 @@ export default {
   userValid: storage.get('userValid', false),
   buckets: storage.get('buckets', []),
   resourceListData: [],
-  resourceListCount: 0
+  resourceListCount: 0,
+  downloadPath: storage.get('downloadPath', '')
 }
