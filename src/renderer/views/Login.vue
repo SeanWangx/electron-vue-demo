@@ -34,10 +34,10 @@ export default {
       },
       rules: {
         AccessKey: [
-          { required: true, message: '请输入AccessKey', trigger: 'change' }
+          { required: true, message: '请输入AccessKey', trigger: 'blur' }
         ],
         SecretKey: [
-          { required: true, message: '请输入SecretKey', trigger: 'change' }
+          { required: true, message: '请输入SecretKey', trigger: 'blur' }
         ]
       }
     }
