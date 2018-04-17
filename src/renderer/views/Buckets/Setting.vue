@@ -32,11 +32,11 @@
         </el-form-item>
         <div>
           <el-button
-            @click="() => changeDownloadPath(false)"
+            @click="toSet"
             size="small"
             plain="">设置</el-button>
           <el-button
-            @click="() => changeDownloadPath(true)"
+            @click="toReset"
             size="small"
             plain="">重置</el-button>
         </div>
@@ -47,6 +47,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+// import { ipcRenderer } from 'electron'
 
 const { dialog } = require('electron').remote
 
@@ -69,6 +70,11 @@ export default {
       }
     }
   },
+  mounted () {
+    /* ipcRenderer.on('', (evt, res) => {
+      const { downloadPath = '' } = res || {}
+    }) */
+  },
   methods: {
     ...mapActions({
       _logout: 'LOGOUT',
@@ -87,21 +93,25 @@ export default {
         this.$router.replace('/login')
       }
     },
-    async changeDownloadPath (reset = false) {
+    async changeDownloadPath (downloadPath = '') {
       try {
-        if (reset === false) {
-          let pathArr = dialog.showOpenDialog({
-            properties: ['openDirectory', 'createDirectory']
-          })
-          if (pathArr && pathArr[0]) {
-            await this._changeDownloadPath({ downloadPath: pathArr[0] })
-          }
-        } else {
-          await this._changeDownloadPath({ downloadPath: '' })
-        }
+        await this._changeDownloadPath({ downloadPath: downloadPath || '' })
       } catch (e) {
         console.warn(e)
       }
+    },
+    toSet () {
+      let pathArr = dialog.showOpenDialog({
+        properties: ['openDirectory', 'createDirectory']
+      })
+      if (pathArr && pathArr[0]) {
+        this.changeDownloadPath(pathArr[0])
+      } else {
+        this.changeDownloadPath()
+      }
+    },
+    toReset () {
+      this.changeDownloadPath()
     }
   }
 }
