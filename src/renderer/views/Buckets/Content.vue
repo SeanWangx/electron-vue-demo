@@ -134,6 +134,10 @@ import { clipboard, shell, ipcRenderer } from 'electron'
 import VMoveResource from './components/MoveResource'
 
 const { dialog } = require('electron').remote
+const fetchFileName = v => {
+  let result = /^(.*\/)?(.+\..+)$/.exec(v)
+  return result ? result[2] : result
+}
 
 export default {
   props: {
@@ -270,12 +274,15 @@ export default {
       }
     },
     downloadFile (key) {
-      let filePath = dialog.showSaveDialog({
-        defaultPath: key
-      })
-      let fileURI = `http://${this.domain}/${key}`
-      if (filePath) {
-        ipcRenderer.send('DOWNLOAD_FILE', { filePath, fileURI })
+      let fileName = fetchFileName(key)
+      if (fileName) {
+        let filePath = dialog.showSaveDialog({
+          defaultPath: this.downloadPath ? `${this.downloadPath}/${fileName}` : fileName
+        })
+        let fileURI = `http://${this.domain}/${key}`
+        if (filePath) {
+          ipcRenderer.send('DOWNLOAD_FILE', { filePath, fileURI })
+        }
       }
     },
     copyLink (key) {
