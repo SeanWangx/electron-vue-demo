@@ -154,7 +154,6 @@ export default {
     return {
       prefix: '',
       domain: '',
-      downloadPath: '',
       moveResourceVisible: false,
       moveResourceConfig: {},
       previewInfo: {}
@@ -164,7 +163,8 @@ export default {
     ...mapGetters({
       buckets: 'buckets',
       resourceListData: 'resourceListData',
-      resourceListCount: 'resourceListCount'
+      resourceListCount: 'resourceListCount',
+      downloadPath: 'downloadPath'
     }),
     resourceListFSize () {
       let fsize = this.resourceListData.reduce((acc, cur) => acc + (cur['fsize'] || 0), 0)
@@ -276,11 +276,6 @@ export default {
       let fileURI = `http://${this.domain}/${key}`
       if (filePath) {
         ipcRenderer.send('DOWNLOAD_FILE', { filePath, fileURI })
-      } else {
-        this.$message.error({
-          message: '信息缺失，无法下载！',
-          center: true
-        })
       }
     },
     copyLink (key) {
