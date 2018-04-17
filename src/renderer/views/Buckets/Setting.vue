@@ -47,7 +47,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-// import { ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electron'
 
 const { dialog } = require('electron').remote
 
@@ -71,9 +71,17 @@ export default {
     }
   },
   mounted () {
-    /* ipcRenderer.on('', (evt, res) => {
-      const { downloadPath = '' } = res || {}
-    }) */
+    ipcRenderer.on('DIR_EXISTS_REPLY', (evt, res) => {
+      const { downloadPath = '', exists = false } = res
+      if (exists) {
+        if (downloadPath !== this.downloadPath) {
+          this.changeDownloadPath(downloadPath)
+        }
+      } else {
+        this.$message.warning('实际默认下载路径不存在，已重置！')
+        this.changeDownloadPath()
+      }
+    })
   },
   methods: {
     ...mapActions({
@@ -104,11 +112,9 @@ export default {
       let pathArr = dialog.showOpenDialog({
         properties: ['openDirectory', 'createDirectory']
       })
-      if (pathArr && pathArr[0]) {
-        this.changeDownloadPath(pathArr[0])
-      } else {
-        this.changeDownloadPath()
-      }
+      ipcRenderer.send('DIR_EXISTS', {
+        downloadPath: pathArr === undefined ? this.downloadPath : (pathArr[0] || '')
+      })
     },
     toReset () {
       this.changeDownloadPath()

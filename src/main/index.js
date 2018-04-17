@@ -72,6 +72,17 @@ function createWindow () {
       })
     })
   })
+  // directory exist
+  ipcMain.on('DIR_EXISTS', (evt, payload) => {
+    const { downloadPath } = payload
+    let _exists = downloadPath === '' ? true : (
+      !!downloadPath === true ? fs.existsSync(downloadPath) : false
+    )
+    evt.sender.send('DIR_EXISTS_REPLY', {
+      exists: _exists,
+      downloadPath
+    })
+  })
 }
 
 app.on('ready', createWindow)
