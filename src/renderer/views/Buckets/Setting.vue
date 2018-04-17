@@ -110,6 +110,7 @@ export default {
     },
     toSet () {
       let pathArr = dialog.showOpenDialog({
+        buttonLabel: '保存',
         properties: ['openDirectory', 'createDirectory']
       })
       ipcRenderer.send('DIR_EXISTS', {
